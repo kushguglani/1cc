@@ -1,0 +1,6 @@
+ssh -i "skystop.pem" ubuntu@ec2-13-59-87-48.us-east-2.compute.amazonaws.com
+
+ec2-13-59-87-48.us-east-2.compute.amazonaws.com
+
+
+ubuntu@ec2-13-59-87-48.us-east-2.compute.amazonaws.com
