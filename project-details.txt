@@ -1,6 +1,85 @@
+
+-------------------------aws-------------------------
+
 ssh -i "skystop.pem" ubuntu@ec2-13-59-87-48.us-east-2.compute.amazonaws.com
 
 ec2-13-59-87-48.us-east-2.compute.amazonaws.com
 
-
 ubuntu@ec2-13-59-87-48.us-east-2.compute.amazonaws.com
+
+
+
+-------------------------env in aws-------------------------
+
+MONGODB_URI = mongodb://localhost:27017/project-seeker
+NODE_ENV = development
+SECRET_KEY = project-seeker-development-secret-kush-is-always-khush
+
+
+
+For Ubuntu based (Linux) EC2 Instances
+
+Edit ~/.bashrc file of User which will run the program
+
+sudo nano ~/.bashrc
+
+Add following line at the end, use any variable_name. Assuming unique and unused
+
+export API_KEY=btgj32fkf
+
+Save File and
+
+source ~/.bashrc
+
+Now, in node program process.env.API_KEY will be available.
+
+-------------------------db-------------------------
+collection
+
+gym
+    owner
+    crewMember
+
+gym member 
+
+gym_owner
+gym_list
+gym_crew_member
+gym_member
+
+gym_owner:{
+    mobile:string,
+    name:string,
+    lastName:string,
+    email:string,
+    owner_gym_ids: ["1a"],
+    gym_crew_member_ids: ["1b"]
+}
+
+gym_list:{
+    id:"1a",
+    name:"string"
+    type:"string"
+    address:"string"
+    city:"string"
+    map_address:"string"
+}
+
+gym_crew_member:{
+    id:"1b",
+    mobile:string,
+    name:string,
+    lastName:string,
+    email:string,
+    userName:string,
+    password:string
+}
+
+
+
+gym_member:{
+    mobile:string,
+    name:string,
+    lastName:string,
+    email:string,
+} 
