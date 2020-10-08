@@ -25,6 +25,7 @@ sit-build*
 uat-build*
 settings.json
 private-details.txt
+project-details.txt
 
 npm-debug.log*
 yarn-debug.log*
