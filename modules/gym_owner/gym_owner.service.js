@@ -19,6 +19,7 @@ module.exports = {
 async function authenticate({ email, password }) {
     const owner = await GymOwner.findOne({ email });
     if (owner && bcrypt.compareSync(password, owner.password)) {
+        if(owner.emailVerirfied === 0 ) return "Email Verification Pending"
         const payload = { id: owner.id, role: 'gymOwner' };
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
         return {

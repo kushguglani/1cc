@@ -9,17 +9,13 @@ function jwt() {
     return expressJwt({ secret, algorithms: ['HS256'], isRevoked }).unless({
         path: [
             // public routes that don't require authentication
-            '/employee/authenticate',
             '/gym-owner/register',
             '/gym-owner/authenticate',
+            '/gym-owner/validate',
             '/gym-member/register',
             '/gym-member/send',
             '/gym-member/validate',
-            '/gym-owner/validate',
             '/gym-member/authenticate',
-            '/manager/authenticate',
-            '/manager/register',
-            '/auth/facebook',
             '/documentation'
         ]
     });
