@@ -10,7 +10,12 @@ function jwt() {
         path: [
             // public routes that don't require authentication
             '/employee/authenticate',
-            '/employee/register',
+            '/gym-owner/register',
+            '/gym-owner/authenticate',
+            '/gym-member/register',
+            '/gym-member/send',
+            '/gym-member/validate',
+            '/gym-member/authenticate',
             '/manager/authenticate',
             '/manager/register',
             '/auth/facebook',
@@ -20,11 +25,11 @@ function jwt() {
 }
 
 async function isRevoked(req, payload, done) {
-    const user = await userService.getById(payload.id);
-    const manager = await managerService.getById(payload.id);
+    // const user = await userService.getById(payload.id);
+    // const manager = await managerService.getById(payload.id);
     // revoke token if user no longer exists
-    if (!user && !manager) {
-        return done(null, true);
-    }
+    // if (!user && !manager) {
+    //     return done(null, true);
+    // }
     done();
 };

@@ -16,20 +16,6 @@ const errorHandler = require('helpers/error-handler');
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
 
 
-var infobip = require('infobip');
- 
-//Initialize the client
-var client = new infobip.Infobip('earzum2', 'Podotalk77!');
- 
-//Set the message
-var message = {from: "InfoSMS", to : "41793026727", text : "My first Infobip SMS"};
- 
-//Send an SMS
-client.SMS.send(message,function(err, response){
-   console.log(response);
-}).catch(err=>{
-    console.log(err);
-});
 
 
 setupExpess();
@@ -48,6 +34,9 @@ function setupExpess() {
     app.use(jwt());
 
     // api user routes
+    app.use('/gym-owner', require('./modules/gym_owner/gym_owner.controller'));
+    app.use('/gym-list', require('./modules/gym_list/gym_list.controller'));
+    app.use('/gym-member', require('./modules/gym_member/gym_member.controller'));
     // app.use('/employee', require('./modules/employee/employee.controller'));
     // app.use('/manager', require('./modules/manager/manager.controller'));
     // app.use('/project', require('./modules/project/project.controller'));

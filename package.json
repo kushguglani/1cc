@@ -13,6 +13,7 @@
   "author": "Kush Guglani",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "env-cmd": "^10.1.0",
@@ -20,6 +21,9 @@
     "express-jwt": "^6.0.0",
     "infobip": "^0.1.0",
     "mongoose": "^5.10.7",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.4.13",
+    "nodemailer-smtp-transport": "^2.7.4",
     "rootpath": "^0.1.2"
   }
 }

@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 
-const GymMemberSchema = mongoose.Schema({
+const GymListSchema = mongoose.Schema({
     name: { type: String, required: true },
     type: { type: String, required: true },
     address: { type: String, required: true },
     city: { type: String, required: true },
+    zip_code: { type: String, required: true },
     map_address: { type: String, required: true },
-    mobile: { type: String, unique: true},
-    email: { type: String, unique: true},
+    mobile: { type: String},
+    email: { type: String},
     // owner_gym_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' }],
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }]
 });
 
-GymMemberSchema.set('toJSON', {
+GymListSchema.set('toJSON', {
     virtuals: true,
     versionKey: false,
     transform: function (doc, ret) {
@@ -21,7 +22,7 @@ GymMemberSchema.set('toJSON', {
 });
 
 
-const GymMember = mongoose.model('GymMember', GymMemberSchema);
+const GymList = mongoose.model('GymList', GymListSchema);
 
 
-module.exports = GymMember;
+module.exports = GymList;

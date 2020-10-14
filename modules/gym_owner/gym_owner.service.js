@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const db = require('helpers/db');
-const Employee = db.Employee;
+const db = require('../../helpers/db');
+const GymOwner = db.GymOwner;
 
 module.exports = {
     authenticate,
@@ -13,36 +13,36 @@ module.exports = {
     inactive
 };
 
-async function authenticate({ userName, password }) {
-    const employee = await Employee.findOne({ userName });
-    if (employee && bcrypt.compareSync(password, employee.password)) {
-        const payload = { id: employee.id, role: 'employee' };
+async function authenticate({ email, password }) {
+    const owner = await GymOwner.findOne({ email });
+    if (owner && bcrypt.compareSync(password, owner.password)) {
+        const payload = { id: owner.id, role: 'gymOwner' };
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
         return {
-            ...employee.toJSON(),
+            ...owner.toJSON(),
             token
         };
     }
 }
 
 async function getAll() {
-    return await Employee.find({"active":1});
+    return await GymOwner.find({"active":1});
 }
 
 async function getById(id) {
-    return await Employee.findById(id);
+    return await GymOwner.findById(id);
 }
 
 async function create(employeeParam) {
     // validate
-    if (await Employee.findOne({ email: employeeParam.email })) {
-        throw `Employee with email:${employeeParam.email} already exists`;
+    if (await GymOwner.findOne({ email: employeeParam.email })) {
+        throw `GymOwner with email:${employeeParam.email} already exists`;
     }
-    else if (await Employee.findOne({ userName: employeeParam.userName })) {
-        throw `Employee with user name:${employeeParam.userName} already exists`;
+    else if (await GymOwner.findOne({ mobile: employeeParam.mobile })) {
+        throw `GymOwner with mobile :${employeeParam.mobile} already exists`;
     }
 
-    const employee = new Employee(employeeParam);
+    const employee = new GymOwner(employeeParam);
 
     // hash password
     if (employeeParam.password) {
@@ -53,12 +53,12 @@ async function create(employeeParam) {
 }
 
 async function update(id, employeeParam) {
-    const employee = await Employee.findById(id);
+    const employee = await GymOwner.findById(id);
 
     // validate
-    if (!employee) throw 'Employee not found';
-    if (employee.employeename !== employeeParam.employeename && await Employee.findOne({ employeename: employeeParam.employeename })) {
-        throw 'Employeename "' + employeeParam.employeename + '" is already taken';
+    if (!employee) throw 'GymOwner not found';
+    if (employee.employeename !== employeeParam.employeename && await GymOwner.findOne({ employeename: employeeParam.employeename })) {
+        throw 'GymOwnername "' + employeeParam.employeename + '" is already taken';
     }
 
     // hash password if it was entered
@@ -73,13 +73,13 @@ async function update(id, employeeParam) {
 }
 
 async function _delete(id) {
-    await Employee.findByIdAndRemove(id);
+    await GymOwner.findByIdAndRemove(id);
 }
 
 async function inactive(id) {
-    const employee = await Employee.findById(id);
+    const employee = await GymOwner.findById(id);
     // validate
-    if (!employee) throw 'Employee not found';
+    if (!employee) throw 'GymOwner not found';
     employee.active = 0;
     await employee.save();
 }

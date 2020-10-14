@@ -1,0 +1,682 @@
+{
+	"variables": [],
+	"info": {
+		"name": "project-seeker",
+		"_postman_id": "9aa147e0-fbc8-be39-27fd-992170fc5fe2",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "project",
+			"description": "",
+			"item": [
+				{
+					"name": "add project",
+					"request": {
+						"url": "localhost:5000/project/register",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectName\":\"banking\",\n\t\"clientName\":\"abc\",\n\t\"technologies\":[\"node\",\"angular\"],\n\t\"role\":\"developer\",\n\t\"jobDescription\":\"front end developer\",\n\t\"status\":\"open\",\n\t\"craetedBy\":{\n\t    \"managerId\":\"5f2a6fba8044052780629c1e\",\n\t    \"managerName\":\"manager\"\n\t},\n\t\"userApplied\":[],\n\t\"active\":1\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Projet opening",
+					"request": {
+						"url": "localhost:5000/project/opening",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "apply for project",
+					"request": {
+						"url": "localhost:5000/project/apply/5f2a7e8cf6e7da5414a8bac8",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "project inactivate ",
+					"request": {
+						"url": "localhost:5000/project/delete/5f2a831d9d2fd871d01d2fb2",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete project permanently",
+					"request": {
+						"url": "localhost:5000/project/_delete/5f2a83029d2fd871d01d2fb1",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update project details",
+					"request": {
+						"url": "localhost:5000/project/5f2a7da1f6e7da5414a8bac7",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"clientName\": \"re\",\n\t\"technologies\":[\"node\",\"reactjs\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get selected project details by id",
+					"request": {
+						"url": "localhost:5000/project/5f2a7da1f6e7da5414a8bac7",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"clientName\": \"re\",\n\t\"technologies\":[\"node\",\"reactjs\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get all projects",
+					"request": {
+						"url": "localhost:5000/project/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"clientName\": \"re\",\n\t\"technologies\":[\"node\",\"reactjs\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "employee",
+			"description": "",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"url": "localhost:5000/employee/register",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"yash1\",\r\n    \"userName\": \"yashGuglani1\",\r\n    \"email\": \"kg31@gmail.com\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "authenticate login",
+					"request": {
+						"url": "localhost:5000/employee/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"kushGuglani1\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "list of employees",
+					"request": {
+						"url": "localhost:5000/employee/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "download documentation",
+					"request": {
+						"url": "localhost:5000/employee/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "current-employee-details",
+					"request": {
+						"url": "localhost:5000/employee/current",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update employee details",
+					"request": {
+						"url": "localhost:5000/employee/5f26d058528d4181b405c845",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"kush guglani\",\r\n    \"userName\": \"kushGuglani5\",\r\n    \"email\": \"kg@gmail.com\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "user inactivate ",
+					"request": {
+						"url": "localhost:5000/employee/delete/5f26d058528d4181b405c845",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete employee permanently",
+					"request": {
+						"url": "localhost:5000/employee/_delete/5f2a4f0579b29a40e0e34122",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"url": "localhost:5000/employee/5f26d058528d4181b405c845",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "upload cv",
+					"request": {
+						"url": "http://localhost:5000/employee/uploadResume",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"description": "",
+									"type": "file"
+								},
+								{
+									"key": "name",
+									"value": "sampleFile",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "download resume",
+					"request": {
+						"url": "localhost:5000/employee/downloadResume/5f2a6f398044052780629c19",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenEmployee}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "manager",
+			"description": "",
+			"item": [
+				{
+					"name": "manager-register",
+					"request": {
+						"url": "localhost:5000/manager/register",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"manager2\",\r\n    \"userName\": \"Manager2\",\r\n    \"email\": \"manager2@gmail.com\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"url": "localhost:5000/manager/5f2a5429bc39300f5caa08c8",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "manager-authenticate",
+					"request": {
+						"url": "localhost:5000/manager/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"Manager\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "list of manager",
+					"request": {
+						"url": "localhost:5000/manager",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update mager details",
+					"request": {
+						"url": "localhost:5000/manager/5f26bba1cecb424328f4c8dd",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"kushg1234\",\r\n    \"userName\": \"kushGuglani561\",\r\n    \"email\": \"kg561@gmail.com\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "current-manager-details",
+					"request": {
+						"url": "localhost:5000/manager/current",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "manager inactivate ",
+					"request": {
+						"url": "localhost:5000/manager/delete/5f26bba1cecb424328f4c8dd",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete manager permanently",
+					"request": {
+						"url": "localhost:5000/manager/_delete/5f26ca4cc4834f39fc391004",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtTokenManager}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "authenticate login",
+					"request": {
+						"url": "localhost:5000/manager/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"Manager2\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Documentation",
+			"request": {
+				"url": "localhost:5000/documentation",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,79 +1,100 @@
 const express = require('express');
 const router = express.Router();
-const GymOwnerService = require('./gym_owner.service');
+const GymMemberService = require('./gym_member.service');
 const Upload = require('../../helpers/fileUploadServer');
 const multer = require('multer');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', register);
-router.get('/', validateEmployee, getAll);
-router.get('/current', validateEmployee, getCurrent);
-router.get('/:id', validateEmployee, getById);
+router.get('/validate', validateEmail);
+// router.get('/send',sendEmail);
+// router.get('/', validateEmployee, getAll);
+// router.get('/current', validateEmployee, getCurrent);
+// router.get('/:id', validateEmployee, getById);
 router.put('/:id', validateEmployee, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
 router.post('/uploadResume', validateEmployee, uploadResume)
-router.get('/downloadResume/:id', validateEmployee, downloadResume)
+// router.get('/downloadResume/:id', validateEmployee, downloadResume)
 
 module.exports = router;
+
+
 
 function validateEmployee(req, res, next) {
     req.user.role === 'employee' ? next() : next("Invalid Token")
 }
 
+function validateEmail(req, res, next) {
+    var id = req.param('id');
+    GymMemberService.validateOwnerEmail(id)
+    .then(msz=>{
+        res.json(msz);
+    })
+}
+
 function authenticate(req, res, next) {
-    GymOwnerService.authenticate(req.body)
+    GymMemberService.authenticate(req.body, req.get('host'))
         .then(owner => owner ? res.json(owner) : res.status(401).json({ message: 'Email or password is incorrect' }))
         .catch(err => next(err));
 }
 
 function emailAuthenticate(req, res, next) {
-    GymOwnerService.authenticate(req.body)
+    GymMemberService.authenticate(req.body)
         .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect' }))
         .catch(err => next(err));
 }
 
 function register(req, res, next) {
-    GymOwnerService.create(req.body)
-        .then(() => res.json({ "message": "Gym Owner Registered, otp verification pending" }))
+    GymMemberService.create(req.body)
+        .then((member) => {
+            return GymMemberService.sendEmail(member, req.get('host'))
+        })
+        .then(email => {
+            if (email.accepted[0])
+                res.json({ "message": "Gym member Registered, please verify your registered email" })
+            else
+                res.json({ "error": "error in sending email" })
+        })
         .catch(err => next(err));
 }
 
 function getAll(req, res, next) {
-    GymOwnerService.getAll()
+    GymMemberService.getAll()
         .then(employees => res.json(employees))
         .catch(err => next(err));
 }
 
 function getCurrent(req, res, next) {
-    GymOwnerService.getById(req.user.id)
+    GymMemberService.getById(req.user.id)
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
-    GymOwnerService.getById(req.params.id)
+    GymMemberService.getById(req.params.id)
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
 function update(req, res, next) {
-    GymOwnerService.update(req.params.id, req.body)
+    GymMemberService.update(req.params.id, req.body)
         .then(() => res.json({ message: "Employee details updated" }))
         .catch(err => next(err));
 }
 
 
 function _delete(req, res, next) {
-    GymOwnerService.delete(req.params.id)
+    GymMemberService.delete(req.params.id)
         .then(() => res.json({ message: "Employe deleted from db" }))
         .catch(err => next(err));
 }
 
 function inactive(req, res, next) {
-    GymOwnerService.inactive(req.params.id)
+    GymMemberService.inactive(req.params.id)
         .then(() => res.json({ message: "Employer Inactive" }))
         .catch(err => next(err));
 }
@@ -89,7 +110,7 @@ function uploadResume(req, res, next) {
         else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
-        GymOwnerService.getById(req.user.id)
+        GymMemberService.getById(req.user.id)
             .then(employee => {
                 if (!employee) res.sendStatus(404)
                 // check if resume already uploaded
@@ -104,7 +125,7 @@ function uploadResume(req, res, next) {
                     }
                 }
                 employee.resumeUploaded = req.file.filename;
-                return GymOwnerService.update(req.user.id, employee)
+                return GymMemberService.update(req.user.id, employee)
             })
             .then(() => res.json({ message: "File uploaded sucessfully!" }))
             .catch(err => next(err));
@@ -113,11 +134,11 @@ function uploadResume(req, res, next) {
 
 function downloadResume(req, res, next) {
     const fileLocation = "uploads/cv";
-    GymOwnerService.getById(req.user.id)
+    GymMemberService.getById(req.user.id)
         .then(employee => {
             if (employee && employee.resumeUploaded) {
                 const filename = employee.resumeUploaded;
-                res.download(fileLocation+'/'+filename, filename)
+                res.download(fileLocation + '/' + filename, filename)
             }
             else res.sendStatus(404)
         })
