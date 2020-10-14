@@ -42,7 +42,7 @@ async function sendEmail(member, host) {
 
 async function validateOwnerEmail(jwtID) {
     var decoded = jwt.verify(jwtID, process.env.SECRET_KEY)
-    if (decoded.role !== "gymMemeber") return "Owner is not valid";
+    if (decoded.role !== "gymMemeber") return "Gym Member is not valid";
     let id = decoded.id;
     const owner = await GymMember.findOne({ "_id":id });
     if (owner) {
@@ -50,8 +50,6 @@ async function validateOwnerEmail(jwtID) {
         await owner.save();
         return { "message": "email verified successfully" }
     }
-    // console.log(decoded);
-    // return res.send(decoded)
 }
 
 async function getAll() {

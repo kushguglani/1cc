@@ -15,6 +15,7 @@ function jwt() {
             '/gym-member/register',
             '/gym-member/send',
             '/gym-member/validate',
+            '/gym-owner/validate',
             '/gym-member/authenticate',
             '/manager/authenticate',
             '/manager/register',

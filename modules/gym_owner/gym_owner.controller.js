@@ -7,6 +7,7 @@ const fs = require('fs');
 
 // routes
 router.post('/authenticate', authenticate);
+router.get('/validate', validateEmail);
 router.post('/register', register);
 router.get('/', validateEmployee, getAll);
 router.get('/current', validateEmployee, getCurrent);
@@ -23,6 +24,14 @@ function validateEmployee(req, res, next) {
     req.user.role === 'employee' ? next() : next("Invalid Token")
 }
 
+function validateEmail(req, res, next) {
+    var id = req.param('id');
+    GymOwnerService.validateOwnerEmail(id)
+    .then(msz=>{
+        res.json(msz);
+    })
+}
+
 function authenticate(req, res, next) {
     GymOwnerService.authenticate(req.body)
         .then(owner => owner ? res.json(owner) : res.status(401).json({ message: 'Email or password is incorrect' }))
@@ -37,8 +46,16 @@ function emailAuthenticate(req, res, next) {
 
 function register(req, res, next) {
     GymOwnerService.create(req.body)
-        .then(() => res.json({ "message": "Gym Owner Registered, otp verification pending" }))
-        .catch(err => next(err));
+    .then((owner) => {
+        return GymOwnerService.sendEmail(owner, req.get('host'))
+    })
+    .then(email => {
+        if (email.accepted[0])
+            res.json({ "message": "Gym owner Registered, please verify your registered email" })
+        else
+            res.json({ "error": "error in sending email" })
+    })
+    .catch(err => next(err));
 }
 
 function getAll(req, res, next) {
