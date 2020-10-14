@@ -9,6 +9,7 @@ const GymListSchema = mongoose.Schema({
     map_address: { type: String, required: true },
     mobile: { type: String},
     email: { type: String},
+    active: { type: Number, required: true, default:1 },
     // owner_gym_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' }],
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }]
 });

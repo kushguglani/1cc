@@ -8,7 +8,7 @@ const fs = require('fs');
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', validateGymOwner, register);
-router.get('/', validateEmployee, getAll);
+router.get('/', validateGymOwner, getAll);
 router.get('/current', validateEmployee, getCurrent);
 router.get('/:id', validateEmployee, getById);
 router.put('/:id', validateEmployee, update);
@@ -49,7 +49,7 @@ function register(req, res, next) {
 
 function getAll(req, res, next) {
     GymListService.getAll()
-        .then(employees => res.json(employees))
+        .then(gyms => res.json(gyms))
         .catch(err => next(err));
 }
 
