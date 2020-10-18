@@ -15,10 +15,6 @@ const errorHandler = require('helpers/error-handler');
 //port
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
 
-console.log(process.env.SECRET_KEY)
-console.log(process.env)
-
-
 
 setupExpess();
 function setupExpess() {
