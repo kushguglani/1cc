@@ -10,6 +10,16 @@ const GymListSchema = mongoose.Schema({
     mobile: { type: String},
     email: { type: String},
     active: { type: Number, required: true, default:1 },
+    profilePic: { type: String },
+    gymImages: { type: Array },
+    weekdays: { type: Array },
+    timing: { type: Object },
+    created: { type: Date, default: Date.now },
+    updated: { type: Date }
+    // profilePic ->string
+    //gymImages -string
+    //weekday of gym -[]
+    //timing {open:,closed:}
     // owner_gym_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' }],
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }]
 });

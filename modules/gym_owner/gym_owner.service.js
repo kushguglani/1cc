@@ -42,7 +42,6 @@ async function validateOwnerEmail(jwtID) {
 }
 
 async function sendEmail(owner, host) {
-    console.log(owner);
     const payload = { id: owner.id, role: 'gymOwner' };
     const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
     let link = "http://" + host + "/gym-owner/validate?id=" + token;
