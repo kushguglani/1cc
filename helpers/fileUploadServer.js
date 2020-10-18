@@ -1,11 +1,12 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+
 // storage filename and destination
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        fs.mkdirSync('./uploads/cv', { recursive: true })
-        callback(null, "./uploads/cv");
+        fs.mkdirSync(req.file.fileUploadPath, { recursive: true })
+        callback(null, req.file.fileUploadPath);
     },
     filename: function (req, file, callback) {
         callback(null, Date.now() + "_" + file.originalname);
@@ -14,7 +15,7 @@ var storage = multer.diskStorage({
 
 //validate filetype
 var fileFilter = function (req, file, callback) {
-    var filetypes = /docx|pdf|doc/;
+    var filetypes = req.file.filetypes;
     var mimetype = filetypes.test(file.mimetype);
     var extname = filetypes.test(path.extname(
         file.originalname).toLowerCase());
@@ -25,13 +26,5 @@ var fileFilter = function (req, file, callback) {
         + "following filetypes - " + filetypes);
 }
 
-// Define the maximum size for uploading 
-// picture i.e. 5 MB. it is optional 
-const maxSize = 5 * 1000 * 1000;
-const upload = multer({
-    storage,
-    limits: { fileSize: maxSize },
-    fileFilter
-}).single("file");
 
-module.exports.Upload = upload
+module.exports = { storage, fileFilter}

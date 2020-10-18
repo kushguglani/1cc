@@ -54,24 +54,19 @@ async function updateGymOwner(ownerId, gymId) {
     return await gymOwner.save();
 }
 
-async function update(id, employeeParam) {
-    const employee = await GymList.findById(id);
+async function update(id, gymParam) {
+    const gym = await GymList.findById(id);
 
     // validate
-    if (!employee) throw 'GymList not found';
-    if (employee.employeename !== employeeParam.employeename && await GymList.findOne({ employeename: employeeParam.employeename })) {
-        throw 'GymListname "' + employeeParam.employeename + '" is already taken';
-    }
+    if (!gym) throw 'GymList not found';
+  
 
-    // hash password if it was entered
-    if (employeeParam.password) {
-        employeeParam.hash = bcrypt.hashSync(employeeParam.password, 10);
-    }
-    employeeParam.updated = new Date();
+    gymParam.updated = new Date();
+    console.log(gymParam  );
     // copy employeeParam properties to employee
-    Object.assign(employee, employeeParam);
+    Object.assign(gym, gymParam);
 
-    await employee.save();
+    return await gym.save();
 }
 
 async function _delete(id) {
