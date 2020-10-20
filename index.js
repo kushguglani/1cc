@@ -16,8 +16,6 @@ const errorHandler = require('helpers/error-handler');
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 5000;
 
 
-
-
 setupExpess();
 function setupExpess() {
     const app = express();
