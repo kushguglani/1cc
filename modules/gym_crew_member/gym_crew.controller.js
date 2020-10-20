@@ -38,7 +38,7 @@ function authenticate(req, res, next) {
 
 function register(req, res, next) {
     let crewDetails = {}
-    req.body.owner_id=req.user.id;
+    req.body.gym_crew_member_ids=req.user.id;
     GymCrewService.create(req.body)
         .then((crew) => {
             crewDetails = crew;

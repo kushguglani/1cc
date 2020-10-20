@@ -38,7 +38,7 @@ function authenticate(req, res, next) {
 
 function register(req, res, next) {
     let gumPosts = {}
-    req.body.owner_id=req.user.id;
+    req.body.gym_post_ids=req.user.id;
     GymPostService.create(req.body)
         .then((gym) => {
             gumPosts = gym;
