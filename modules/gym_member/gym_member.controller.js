@@ -1,31 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const GymMemberService = require('./gym_member.service');
-const Upload = require('../../helpers/fileUploadServer');
 const multer = require('multer');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-
+const { storage, fileFilter } = require('../../helpers/fileUploadServer');
+ 
+const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/validate', validateEmail);
 // router.get('/send',sendEmail);
-// router.get('/', validateEmployee, getAll);
-// router.get('/current', validateEmployee, getCurrent);
-// router.get('/:id', validateEmployee, getById);
-router.put('/:id', validateEmployee, update);
-router.put('/delete/:id', validateEmployee, inactive);
-router.delete('/_delete/:id', validateEmployee, _delete);
-router.post('/uploadResume', validateEmployee, uploadResume)
-// router.get('/downloadResume/:id', validateEmployee, downloadResume)
+// router.get('/', validateMember, getAll);
+// router.get('/current', validateMember, getCurrent);
+// router.get('/:id', validateMember, getById);
+router.put('/:id', validateMember, update);
+router.put('/delete/:id', validateMember, inactive);
+router.delete('/_delete/:id', validateMember, _delete);
+router.post('/uploadProfile', validateMember, uploadProfile);
+// router.post('/uploadResume', validateMember, uploadResume)
+// router.get('/downloadResume/:id', validateMember, downloadResume)
 
 module.exports = router;
 
 
 
-function validateEmployee(req, res, next) {
-    req.user.role === 'employee' ? next() : next("Invalid Token")
+function validateMember(req, res, next) {
+    req.user.role === 'gymMemeber' ? next() : next("Invalid Token")
 }
 
 function validateEmail(req, res, next) {
@@ -99,8 +101,21 @@ function inactive(req, res, next) {
         .catch(err => next(err));
 }
 
-function uploadResume(req, res, next) {
-    Upload.Upload(req, res, function (err) {
+function uploadProfile(req, res, next) {
+    const memeberID = req.query.id
+    const fileUploadPath = `uploads/${memeberID}/profile`;
+    var filetypes = /jpeg|jpg|png|gif|svg/;
+    req.file = {
+        type: "single",
+        fileUploadPath,
+        filetypes
+    }
+    const UploadSingle = multer({
+        storage,
+        limits: { fileSize: maxSize },
+        fileFilter
+    }).single("file");
+    UploadSingle(req, res, function (err) {
         if (err) {
             return res.send({ message: err });
         }
@@ -110,13 +125,13 @@ function uploadResume(req, res, next) {
         else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
-        GymMemberService.getById(req.user.id)
-            .then(employee => {
-                if (!employee) res.sendStatus(404)
+        GymMemberService.getById(memeberID)
+            .then(gymCrew => {
+                if (!gymCrew) res.sendStatus(404)
                 // check if resume already uploaded
-                if (employee.resumeUploaded) {
+                if (gymCrew.profilePic) {
                     //delete old file from server
-                    const path = './uploads/cv/' + employee.resumeUploaded;
+                    const path = `${fileUploadPath}/${gymCrew.profilePic}`;
                     try {
                         fs.unlinkSync(path)
                         //file removed
@@ -124,14 +139,13 @@ function uploadResume(req, res, next) {
                         next(err);
                     }
                 }
-                employee.resumeUploaded = req.file.filename;
-                return GymMemberService.update(req.user.id, employee)
+                gymCrew.profilePic = req.file.filename;
+                return GymMemberService.update(memeberID, gymCrew)
             })
-            .then(() => res.json({ message: "File uploaded sucessfully!" }))
+            .then(() => res.json({ message: "Profile picture uploaded sucessfully!" }))
             .catch(err => next(err));
     });
 }
-
 function downloadResume(req, res, next) {
     const fileLocation = "uploads/cv";
     GymMemberService.getById(req.user.id)

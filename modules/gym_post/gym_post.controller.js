@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const GymListService = require('./gym_list.service');
+const GymPostService = require('./gym_post.service');
 const GymOwner = require('../gym_owner/gym_owner.service');
 const { storage, fileFilter } = require('../../helpers/fileUploadServer');
 
 const multer = require('multer');
 const fs = require('fs');
  
-const maxSize = 5 * 1000 * 1000;
+const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', validateGymOwner, register);
@@ -17,8 +17,8 @@ router.get('/:id', validateEmployee, getById);
 router.put('/:id', validateGymOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
-router.post('/uploadProfile', validateGymOwner, uploadProfile);
-router.post('/uploadGymImages', validateGymOwner, uploadGymImages);
+// router.post('/uploadProfile', validateGymOwner, uploadProfile);
+router.post('/uploadVideo', validateGymOwner, uploadVideo);
 router.get('/downloadResume/:id', validateEmployee, downloadResume);
 
 module.exports = router;
@@ -31,21 +31,21 @@ function validateEmployee(req, res, next) {
 }
 
 function authenticate(req, res, next) {
-    GymListService.authenticate(req.body)
+    GymPostService.authenticate(req.body)
         .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect' }))
         .catch(err => next(err));
 }
 
 function register(req, res, next) {
-    let gymDetails = {}
+    let gumPosts = {}
     req.body.owner_id=req.user.id;
-    GymListService.create(req.body)
+    GymPostService.create(req.body)
         .then((gym) => {
-            gymDetails = gym;
-            return GymListService.updateGymOwner(req.user.id, gym.id)
+            gumPosts = gym;
+            return GymPostService.updateGymOwner(req.user.id, gym.id)
         })
         .then(response => {
-            return res.json(gymDetails);
+            return res.json(gumPosts);
         })
         .catch(err => next(err));
     // .then(() => res.json({ "message": "Gym Registered successfully" }))
@@ -53,46 +53,46 @@ function register(req, res, next) {
 }
 
 function getAll(req, res, next) {
-    GymListService.getAll()
+    GymPostService.getAll()
         .then(gyms => res.json(gyms))
         .catch(err => next(err));
 }
 
 function getCurrent(req, res, next) {
-    GymListService.getById(req.user.id)
+    GymPostService.getById(req.user.id)
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
-    GymListService.getById(req.params.id)
+    GymPostService.getById(req.params.id)
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
 function update(req, res, next) {
-    GymListService.update(req.params.id, req.body)
-        .then(() => res.json({ message: "Gym Details details updated" }))
+    GymPostService.update(req.params.id, req.body)
+        .then(() => res.json({ message: "Gym Details updated" }))
         .catch(err => next(err));
 }
 
 
 function _delete(req, res, next) {
-    GymListService.delete(req.params.id)
+    GymPostService.delete(req.params.id)
         .then(() => res.json({ message: "Employe deleted from db" }))
         .catch(err => next(err));
 }
 
 function inactive(req, res, next) {
-    GymListService.inactive(req.params.id)
+    GymPostService.inactive(req.params.id)
         .then(() => res.json({ message: "Employer Inactive" }))
         .catch(err => next(err));
 }
 
-function uploadProfile(req, res, next) {
-    const gymId = req.query.id
-    const fileUploadPath = `uploads/${gymId}/profile`;
-    var filetypes = /jpeg|jpg|png|gif|svg/;
+function uploadVideo(req, res, next) {
+    const postId = req.query.id
+    const fileUploadPath = `uploads/${req.user.id}/post`;
+    var filetypes = /mp4|mov|webm|mkv|gif|3gp/;
     req.file = {
         type: "single",
         fileUploadPath,
@@ -113,13 +113,13 @@ function uploadProfile(req, res, next) {
         else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
-        GymListService.getById(gymId)
+        GymPostService.getById(postId)
             .then(gym => {
                 if (!gym) res.sendStatus(404)
                 // check if resume already uploaded
-                if (gym.profilePic) {
+                if (gym.postMediaName) {
                     //delete old file from server
-                    const path = `${fileUploadPath}/${gym.profilePic}`;
+                    const path = `${fileUploadPath}/${gym.postMediaName}`;
                     try {
                         fs.unlinkSync(path)
                         //file removed
@@ -127,10 +127,10 @@ function uploadProfile(req, res, next) {
                         next(err);
                     }
                 }
-                gym.profilePic = req.file.filename;
-                return GymListService.update(gymId, gym)
+                gym.postMediaName = req.file.filename;
+                return GymPostService.update(postId, gym)
             })
-            .then(() => res.json({ message: "Profile picture uploaded sucessfully!" }))
+            .then(() => res.json({ message: "Post video uploaded sucessfully!" }))
             .catch(err => next(err));
     });
 }
@@ -145,7 +145,7 @@ function uploadGymImages(req, res, next) {
         filetypes
     }
 
-    GymListService.getById(gymId)
+    GymPostService.getById(gymId)
         .then(gym => {
             req.file = {
                 type: "multiple",
@@ -175,7 +175,7 @@ function uploadGymImages(req, res, next) {
                         return res.status(404).send(err);
                     }
                     gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
-                    GymListService.update(gymId, gym)
+                    GymPostService.update(gymId, gym)
                         .then(() => {
                             res.json({ message: "Gym Images uploaded sucessfully!" })
                         })

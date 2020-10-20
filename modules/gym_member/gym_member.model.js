@@ -10,6 +10,12 @@ const GymMemberSchema = mongoose.Schema({
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }],
     active: { type: Number, required: true, default:1 },
     created: { type: Date, default: Date.now },
+    connected_gym: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' },
+    dob: { type: String },
+    gender: { type: String },
+    height: { type: String },
+    weight: { type: String },
+    profilePic: { type: String },
     updated: { type: Date }
     // password is missing
 });
@@ -24,7 +30,7 @@ GymMemberSchema.set('toJSON', {
 });
 
 
-const GymMember = mongoose.model('GymMember', GymMemberSchema);
+const GymMember = mongoose.model('Gym_Member', GymMemberSchema);
 
 
 module.exports = GymMember;

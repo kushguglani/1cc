@@ -11,7 +11,8 @@ module.exports = {
     GymOwner: require('../modules/gym_owner/gym_owner.model'),
     GymMember: require('../modules/gym_member/gym_member.model'),
     GymList: require('../modules/gym_list/gym_list.model'),
-    GymManager: require('../modules/gym_member/gym_member.model'),
+    GymCrew: require('../modules/gym_crew_member/gym_crew_member.model'),
+    GymPost: require('../modules/gym_post/gym_post.model'),
     // Manager: require('../modules/manager/manager.model'),
     // Project: require('../modules/project/project.model'),
 };

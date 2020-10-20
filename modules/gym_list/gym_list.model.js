@@ -6,14 +6,15 @@ const GymListSchema = mongoose.Schema({
     address: { type: String, required: true },
     city: { type: String, required: true },
     zip_code: { type: String, required: true },
-    map_address: { type: String, required: true },
+    map_address: { type: Array, required: true },
     mobile: { type: String},
     email: { type: String},
     active: { type: Number, required: true, default:1 },
     profilePic: { type: String },
     gymImages: { type: Array },
     weekdays: { type: Array },
-    timing: { type: Object },
+    timing: { type: Array },
+    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true },
     created: { type: Date, default: Date.now },
     updated: { type: Date }
     // profilePic ->string
@@ -33,7 +34,7 @@ GymListSchema.set('toJSON', {
 });
 
 
-const GymList = mongoose.model('GymList', GymListSchema);
+const GymList = mongoose.model('Gym_List', GymListSchema);
 
 
 module.exports = GymList;
