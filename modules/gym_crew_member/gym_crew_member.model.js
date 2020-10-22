@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const GymCrewMemberSchema = mongoose.Schema({
     name: { type: String },
     userName: { type: String, unique: true,required: true },
-    mobile: { type: String, unique: true },
+    mobile: { type: String},
     email: { type: String, unique: true },
     password: { type: String, required: true },
     address: { type: String },
@@ -16,6 +16,8 @@ const GymCrewMemberSchema = mongoose.Schema({
     weight: { type: String },
     profilePic: { type: String },
     achievements: { type: String },
+    status: { type: Number, required: true, default:1 },
+    active: { type: Number, required: true, default:1 },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true },
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }]
 });

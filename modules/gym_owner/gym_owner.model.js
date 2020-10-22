@@ -11,6 +11,7 @@ const GymOwnerSchema = mongoose.Schema({
     emailVerirfied: { type: Number, required: true, default:0 },
     active: { type: Number, required: true, default:1 },
     created: { type: Date, default: Date.now },
+    status: { type: Number, required: true, default:1 },
     updated: { type: Date }
     // password is missing
 });

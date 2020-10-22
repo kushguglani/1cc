@@ -6,7 +6,7 @@ const { storage, fileFilter } = require('../../helpers/fileUploadServer');
 
 const multer = require('multer');
 const fs = require('fs');
- 
+
 const maxSize = 5 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
@@ -32,13 +32,13 @@ function validateEmployee(req, res, next) {
 
 function authenticate(req, res, next) {
     GymListService.authenticate(req.body)
-        .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect' }))
+        .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect', status: 0 }))
         .catch(err => next(err));
 }
 
 function register(req, res, next) {
     let gymDetails = {}
-    req.body.owner_id=req.user.id;
+    req.body.owner_id = req.user.id;
     GymListService.create(req.body)
         .then((gym) => {
             gymDetails = gym;
@@ -72,7 +72,7 @@ function getById(req, res, next) {
 
 function update(req, res, next) {
     GymListService.update(req.params.id, req.body)
-        .then(() => res.json({ message: "Gym Details details updated" }))
+        .then(() => res.json({ message: "Gym Details details updated", status: 1 }))
         .catch(err => next(err));
 }
 
@@ -93,7 +93,7 @@ function uploadProfile(req, res, next) {
     const gymId = req.query.id
     const fileUploadPath = `uploads/${gymId}/profile`;
     var filetypes = /jpeg|jpg|png|gif|svg/;
-    req.file = {
+    req.fileDetails = {
         type: "single",
         fileUploadPath,
         filetypes
@@ -105,19 +105,19 @@ function uploadProfile(req, res, next) {
     }).single("file");
     UploadSingle(req, res, function (err) {
         if (err) {
-            return res.send({ message: err });
+            return res.send({ message: err, status: 0 });
         }
         else if (!req.file) {
-            return res.send({ message: 'Please select an file to upload' });
+            return res.send({ message: 'Please select an file to upload', status: 0 });
         }
         else if (err instanceof multer.MulterError) {
             return res.send(err);
         }
         GymListService.getById(gymId)
             .then(gym => {
-                if (!gym) res.sendStatus(404)
+                if (!gym) return res.send({ message: "gym id is not valid", status: 0 })
                 // check if resume already uploaded
-                if (gym.profilePic) {
+                else if (gym.profilePic) {
                     //delete old file from server
                     const path = `${fileUploadPath}/${gym.profilePic}`;
                     try {
@@ -130,7 +130,7 @@ function uploadProfile(req, res, next) {
                 gym.profilePic = req.file.filename;
                 return GymListService.update(gymId, gym)
             })
-            .then(() => res.json({ message: "Profile picture uploaded sucessfully!" }))
+            .then(() => res.json({ message: "Profile picture uploaded sucessfully!", status: 1 }))
             .catch(err => next(err));
     });
 }
@@ -139,50 +139,47 @@ function uploadGymImages(req, res, next) {
     const gymId = req.query.id;
     const fileUploadPath = `uploads/${gymId}/gymImages`;
     var filetypes = /jpeg|jpg|png|gif|svg/;
-    req.file = {
+    req.fileDetails = {
         type: "multiple",
         fileUploadPath,
         filetypes
     }
-
     GymListService.getById(gymId)
         .then(gym => {
-            req.file = {
-                type: "multiple",
-                fileUploadPath,
-                filetypes,
+            console.log(gym);
+            if (!gym) return res.send({ message: "gym id is not valid", status: 0 })
+            let fileCount = 6
+            if (gym.gymImages && gym.gymImages.length >= 6) {
+                return res.send({ message: "You have already uploaded maximum gym images(6)", status: 0 })
             }
-            const fileCount= 6 - (gym.gymImages.length >0 ? gym.gymImages.length:0);
-            if (!gym) res.sendStatus(404)
-            // check count
-            else if (gym.gymImages && gym.gymImages.length >= 6) {
-                return res.send({ message: "You have already uploaded maximum gym images(6)" })
-            }
-            else {
-                const uploadMultipleFile = multer({
-                    storage,
-                    limits: { fileSize: maxSize },
-                    fileFilter
-                }).array("files", fileCount);
-                uploadMultipleFile(req, res, function (err) {
-                    if (err) {
-                        return res.status(404).send({ message: err });
-                    }
-                    else if (!req.files) {
-                        return res.status(404).send({ message: 'Please select an file to upload' });
-                    }
-                    else if (err instanceof multer.MulterError) {
-                        return res.status(404).send(err);
-                    }
-                    gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
-                    GymListService.update(gymId, gym)
-                        .then(() => {
-                            res.json({ message: "Gym Images uploaded sucessfully!" })
-                        })
+            else if (gym.gymImages)
+                fileCount = 6 - (gym.gymImages.length > 0 ? gym.gymImages.length : 0);
 
-                })
+            console.log(fileCount);
+            const uploadMultipleFile = multer({
+                storage,
+                limits: { fileSize: maxSize },
+                fileFilter
+            }).array("files", fileCount);
+            uploadMultipleFile(req, res, function (err) {
+                if (err) {
+                    return res.status(404).send({ message: err, status: 0 });
+                }
+                else if (!req.files) {
+                    return res.status(404).send({ message: 'Please select an file to upload', status: 0 });
+                }
+                else if (err instanceof multer.MulterError) {
+                    return res.status(404).send(err);
+                }
+                gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
+                GymListService.update(gymId, gym)
+                    .then(() => {
+                        res.json({ message: "Gym Images uploaded sucessfully!", status: 1 })
+                    })
 
-            }
+            })
+
+
         })
 }
 

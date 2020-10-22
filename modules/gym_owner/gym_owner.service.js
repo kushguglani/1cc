@@ -18,8 +18,10 @@ module.exports = {
 
 async function authenticate({ email, password }) {
     const owner = await GymOwner.findOne({ email });
+    console.log(owner);
     if (owner && bcrypt.compareSync(password, owner.password)) {
-        if(owner.emailVerirfied === 0 ) return "Email Verification Pending"
+        if (owner.emailVerirfied === 0) return { message: "Email Verification Pending", status: 0 }
+        else if (owner.active === 0) return { message: "Owner is inactive", status: 0 }
         const payload = { id: owner.id, role: 'gymOwner' };
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
         return {
@@ -33,11 +35,11 @@ async function validateOwnerEmail(jwtID) {
     var decoded = jwt.verify(jwtID, process.env.SECRET_KEY)
     if (decoded.role !== "gymOwner") return "Owner is not valid";
     let id = decoded.id;
-    const owner = await GymOwner.findOne({ "_id":id });
+    const owner = await GymOwner.findOne({ "_id": id });
     if (owner) {
         owner.emailVerirfied = 1;
         await owner.save();
-        return { "message": "email verified successfully" }
+        return { "message": "email verified successfully", status: 0 }
     }
 }
 
@@ -54,7 +56,7 @@ async function sendEmail(owner, host) {
 }
 
 async function getAll() {
-    return await GymOwner.find({"active":1});
+    return await GymOwner.find({ "active": 1 });
 }
 
 async function getById(id) {
@@ -80,24 +82,27 @@ async function create(employeeParam) {
     return await employee.save();
 }
 
-async function update(id, employeeParam) {
-    const employee = await GymOwner.findById(id);
+async function update(id, ownerParam) {
+    const owner = await GymOwner.findById(id);
 
     // validate
-    if (!employee) throw 'GymOwner not found';
-    if (employee.employeename !== employeeParam.employeename && await GymOwner.findOne({ employeename: employeeParam.employeename })) {
-        throw 'GymOwnername "' + employeeParam.employeename + '" is already taken';
+    if (!owner) throw 'GymOwner not found';
+    if (ownerParam.email && owner.email !== ownerParam.email) {
+        throw 'Email can not be updated';
+    }
+    if (ownerParam.mobile && owner.mobile !== ownerParam.mobile && await GymOwner.findOne({ mobile: ownerParam.mobile })) {
+        throw 'GymOwnername "' + ownerParam.mobile + '" is already taken';
     }
 
     // hash password if it was entered
-    if (employeeParam.password) {
-        employeeParam.hash = bcrypt.hashSync(employeeParam.password, 10);
+    if (ownerParam.password) {
+        ownerParam.password = bcrypt.hashSync(ownerParam.password, 10);
     }
-    employeeParam.updated = new Date();
-    // copy employeeParam properties to employee
-    Object.assign(employee, employeeParam);
+    ownerParam.updated = new Date();
+    // copy ownerParam properties to owner
+    Object.assign(owner, ownerParam);
 
-    await employee.save();
+    await owner.save();
 }
 
 async function _delete(id) {

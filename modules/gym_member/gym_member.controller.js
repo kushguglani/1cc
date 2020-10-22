@@ -5,7 +5,7 @@ const multer = require('multer');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const { storage, fileFilter } = require('../../helpers/fileUploadServer');
- 
+
 const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
@@ -13,7 +13,7 @@ router.post('/register', register);
 router.get('/validate', validateEmail);
 // router.get('/send',sendEmail);
 // router.get('/', validateMember, getAll);
-// router.get('/current', validateMember, getCurrent);
+router.get('/current', validateMember, getCurrent);
 // router.get('/:id', validateMember, getById);
 router.put('/:id', validateMember, update);
 router.put('/delete/:id', validateMember, inactive);
@@ -27,28 +27,24 @@ module.exports = router;
 
 
 function validateMember(req, res, next) {
+    console.log("123456");
     req.user.role === 'gymMemeber' ? next() : next("Invalid Token")
 }
 
 function validateEmail(req, res, next) {
     var id = req.param('id');
     GymMemberService.validateOwnerEmail(id)
-    .then(msz=>{
-        res.json(msz);
-    })
+        .then(msz => {
+            res.json(msz);
+        })
 }
 
 function authenticate(req, res, next) {
     GymMemberService.authenticate(req.body, req.get('host'))
-        .then(owner => owner ? res.json(owner) : res.status(401).json({ message: 'Email or password is incorrect' }))
+        .then(owner => owner ? res.json(owner) : res.status(401).json({ message: 'Email or password is incorrect', status: 0 }))
         .catch(err => next(err));
 }
 
-function emailAuthenticate(req, res, next) {
-    GymMemberService.authenticate(req.body)
-        .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect' }))
-        .catch(err => next(err));
-}
 
 function register(req, res, next) {
     GymMemberService.create(req.body)
@@ -57,9 +53,9 @@ function register(req, res, next) {
         })
         .then(email => {
             if (email.accepted[0])
-                res.json({ "message": "Gym member Registered, please verify your registered email" })
+                res.json({ "message": "Gym member Registered, please verify your registered email", status: 1 })
             else
-                res.json({ "error": "error in sending email" })
+                res.json({ "error": "error in sending email", status: 0 })
         })
         .catch(err => next(err));
 }
@@ -84,14 +80,14 @@ function getById(req, res, next) {
 
 function update(req, res, next) {
     GymMemberService.update(req.params.id, req.body)
-        .then(() => res.json({ message: "Employee details updated" }))
+        .then(() => res.json({ message: "Employee details updated", status: 1 }))
         .catch(err => next(err));
 }
 
 
 function _delete(req, res, next) {
     GymMemberService.delete(req.params.id)
-        .then(() => res.json({ message: "Employe deleted from db" }))
+        .then(() => res.json({ message: "Employe deleted from db", status: 1 }))
         .catch(err => next(err));
 }
 
@@ -105,7 +101,7 @@ function uploadProfile(req, res, next) {
     const memeberID = req.query.id
     const fileUploadPath = `uploads/${memeberID}/profile`;
     var filetypes = /jpeg|jpg|png|gif|svg/;
-    req.file = {
+    req.fileDetails = {
         type: "single",
         fileUploadPath,
         filetypes
@@ -117,33 +113,35 @@ function uploadProfile(req, res, next) {
     }).single("file");
     UploadSingle(req, res, function (err) {
         if (err) {
-            return res.send({ message: err });
+            return res.send({ message: err, status: 0 });
         }
         else if (!req.file) {
-            return res.send({ message: 'Please select an file to upload' });
+            return res.send({ message: 'Please select an file to upload', status: 0 });
         }
         else if (err instanceof multer.MulterError) {
-            return res.send(err);
+            return res.send({ err, status: 0 });
         }
-        GymMemberService.getById(memeberID)
-            .then(gymCrew => {
-                if (!gymCrew) res.sendStatus(404)
-                // check if resume already uploaded
-                if (gymCrew.profilePic) {
-                    //delete old file from server
-                    const path = `${fileUploadPath}/${gymCrew.profilePic}`;
-                    try {
-                        fs.unlinkSync(path)
-                        //file removed
-                    } catch (err) {
-                        next(err);
+        else {
+            GymMemberService.getById(memeberID)
+                .then(gymCrew => {
+                    if (!gymCrew) res.sendStatus(404)
+                    // check if resume already uploaded
+                    if (gymCrew.profilePic) {
+                        //delete old file from server
+                        const path = `${fileUploadPath}/${gymCrew.profilePic}`;
+                        try {
+                            fs.unlinkSync(path)
+                            //file removed
+                        } catch (err) {
+                            next(err);
+                        }
                     }
-                }
-                gymCrew.profilePic = req.file.filename;
-                return GymMemberService.update(memeberID, gymCrew)
-            })
-            .then(() => res.json({ message: "Profile picture uploaded sucessfully!" }))
-            .catch(err => next(err));
+                    gymCrew.profilePic = req.file.filename;
+                    return GymMemberService.update(memeberID, gymCrew)
+                })
+                .then(() => res.json({ message: "Profile picture uploaded sucessfully!", status: 1 }))
+                .catch(err => next(err));
+        }
     });
 }
 function downloadResume(req, res, next) {

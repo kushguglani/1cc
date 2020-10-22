@@ -16,19 +16,19 @@ module.exports = {
 };
 
 async function authenticate({ userName, password }) {
-    const employee = await GymCrew.findOne({ userName });
-    if (employee && bcrypt.compareSync(password, employee.password)) {
-        const payload = { id: employee.id, role: 'employee' };
+    const crew = await GymCrew.findOne({ userName });
+    if (crew && bcrypt.compareSync(password, crew.password)) {
+        const payload = { id: crew.id, role: 'crew' };
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
         return {
-            ...employee.toJSON(),
+            ...crew.toJSON(),
             token
         };
     }
 }
 
 async function getAll() {
-    return await GymCrew.find({"active":1});
+    return await GymCrew.find({ "active": 1 });
 }
 
 async function getById(id) {
@@ -36,9 +36,24 @@ async function getById(id) {
 }
 
 async function create(GymCrewParams) {
-    const gymData = new GymCrew(GymCrewParams);
-    return await gymData.save();
-   
+    // const gymData = new GymCrew(GymCrewParams);
+    // return await gymData.save();
+
+    // validate
+    if (await GymCrew.findOne({ userName: GymCrewParams.userName })) {
+        throw `Crew Member with userName:${GymCrewParams.userName} already exists`;
+    }
+    const crew = new GymCrew(GymCrewParams);
+    console.log(crew);
+    // hash password
+    if (GymCrewParams.password) {
+        crew.password = bcrypt.hashSync(GymCrewParams.password, 10);
+    }
+    // save employee
+    return await crew.save();
+
+
+
 }
 
 async function updateGymOwner(ownerId, gymId) {
@@ -49,19 +64,21 @@ async function updateGymOwner(ownerId, gymId) {
     return await gymOwner.save();
 }
 
-async function update(id, gymParam) {
-    const gym = await GymCrew.findById(id);
+async function update(id, crewParam) {
+    const crew = await GymCrew.findById(id);
 
     // validate
-    if (!gym) throw 'GymCrew not found';
-  
-
-    gymParam.updated = new Date();
-    console.log(gymParam  );
+    if (!crew) throw 'GymCrew not found';
+    
+    if (crewParam.userName && crew.userName !== crewParam.userName && await GymOwner.findOne({ userName: crewParam.userName })) {
+        throw 'Crew "' + crewParam.userName + '" is already taken';
+    }
+    crewParam.updated = new Date();
+    console.log(crewParam);
     // copy employeeParam properties to employee
-    Object.assign(gym, gymParam);
+    Object.assign(crew, crewParam);
 
-    return await gym.save();
+    return await crew.save();
 }
 
 async function _delete(id) {

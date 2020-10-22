@@ -62,7 +62,6 @@ async function update(id, gymParam) {
   
 
     gymParam.updated = new Date();
-    console.log(gymParam  );
     // copy employeeParam properties to employee
     Object.assign(gym, gymParam);
 

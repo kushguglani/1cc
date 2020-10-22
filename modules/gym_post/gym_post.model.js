@@ -10,6 +10,8 @@ const GymPostSchema = mongoose.Schema({
     videoPoints: { type: Number },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true },
     created: { type: Date, default: Date.now },
+    status: { type: Number, required: true, default:1 },
+    active: { type: Number, required: true, default:1 },
     updated: { type: Date }
     // profilePic ->string
     //gymImages -string

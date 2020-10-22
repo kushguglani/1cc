@@ -6,7 +6,7 @@ const { storage, fileFilter } = require('../../helpers/fileUploadServer');
 
 const multer = require('multer');
 const fs = require('fs');
- 
+
 const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
@@ -38,7 +38,7 @@ function authenticate(req, res, next) {
 
 function register(req, res, next) {
     let gumPosts = {}
-    req.body.gym_post_ids=req.user.id;
+    req.body.owner_id = req.user.id;
     GymPostService.create(req.body)
         .then((gym) => {
             gumPosts = gym;
@@ -93,7 +93,7 @@ function uploadVideo(req, res, next) {
     const postId = req.query.id
     const fileUploadPath = `uploads/${req.user.id}/post`;
     var filetypes = /mp4|mov|webm|mkv|gif|3gp/;
-    req.file = {
+    req.fileDetails = {
         type: "single",
         fileUploadPath,
         filetypes
@@ -105,10 +105,10 @@ function uploadVideo(req, res, next) {
     }).single("file");
     UploadSingle(req, res, function (err) {
         if (err) {
-            return res.send({ message: err });
+            return res.send({ message: err , status: 0});
         }
         else if (!req.file) {
-            return res.send({ message: 'Please select an file to upload' });
+            return res.send({ message: 'Please select an file to upload', status: 0 });
         }
         else if (err instanceof multer.MulterError) {
             return res.send(err);
@@ -130,61 +130,11 @@ function uploadVideo(req, res, next) {
                 gym.postMediaName = req.file.filename;
                 return GymPostService.update(postId, gym)
             })
-            .then(() => res.json({ message: "Post video uploaded sucessfully!" }))
+            .then(() => res.json({ message: "Post video uploaded sucessfully!" , status: 1}))
             .catch(err => next(err));
     });
 }
 
-function uploadGymImages(req, res, next) {
-    const gymId = req.query.id;
-    const fileUploadPath = `uploads/${gymId}/gymImages`;
-    var filetypes = /jpeg|jpg|png|gif|svg/;
-    req.file = {
-        type: "multiple",
-        fileUploadPath,
-        filetypes
-    }
-
-    GymPostService.getById(gymId)
-        .then(gym => {
-            req.file = {
-                type: "multiple",
-                fileUploadPath,
-                filetypes,
-            }
-            const fileCount= 6 - (gym.gymImages.length >0 ? gym.gymImages.length:0);
-            if (!gym) res.sendStatus(404)
-            // check count
-            else if (gym.gymImages && gym.gymImages.length >= 6) {
-                return res.send({ message: "You have already uploaded maximum gym images(6)" })
-            }
-            else {
-                const uploadMultipleFile = multer({
-                    storage,
-                    limits: { fileSize: maxSize },
-                    fileFilter
-                }).array("files", fileCount);
-                uploadMultipleFile(req, res, function (err) {
-                    if (err) {
-                        return res.status(404).send({ message: err });
-                    }
-                    else if (!req.files) {
-                        return res.status(404).send({ message: 'Please select an file to upload' });
-                    }
-                    else if (err instanceof multer.MulterError) {
-                        return res.status(404).send(err);
-                    }
-                    gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
-                    GymPostService.update(gymId, gym)
-                        .then(() => {
-                            res.json({ message: "Gym Images uploaded sucessfully!" })
-                        })
-
-                })
-
-            }
-        })
-}
 
 function downloadResume(req, res, next) {
     const fileLocation = "uploads/cv";

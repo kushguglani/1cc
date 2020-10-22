@@ -18,7 +18,8 @@ module.exports = {
 
 async function authenticate({ email, password }) {
     const owner = await GymMember.findOne({ email });
-    if (owner && bcrypt.compareSync(password, owner.password)) {
+    if (owner.active === 0) return { message: "Owner is inactive", status: 0 }
+    else if (owner && bcrypt.compareSync(password, owner.password)) {
         const payload = { id: owner.id, role: 'gymMemeber' };
         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '7d' });
 

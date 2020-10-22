@@ -10,6 +10,7 @@ const GymListSchema = mongoose.Schema({
     mobile: { type: String},
     email: { type: String},
     active: { type: Number, required: true, default:1 },
+    status: { type: Number, required: true, default:1 },
     profilePic: { type: String },
     gymImages: { type: Array },
     weekdays: { type: Array },
