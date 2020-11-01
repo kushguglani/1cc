@@ -4,15 +4,16 @@ const GymPostSchema = mongoose.Schema({
     title: { type: String, required: true },
     purpose: { type: String, required: true },
     description: { type: String, required: true },
+    type: { type: String, required: true },
     postMediaName: { type: String },
     likes: { type: Number, default: 0 },
     views: { type: Number, default: 0 },
     videoPoints: { type: Number },
-    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true },
+    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
     created: { type: Date, default: Date.now },
     status: { type: Number, required: true, default:1 },
     active: { type: Number, required: true, default:1 },
-    updated: { type: Date }
+    updated: { type: Date, default: Date.now }
     // profilePic ->string
     //gymImages -string
     //weekday of gym -[]

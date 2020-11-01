@@ -11,23 +11,32 @@ const maxSize = 50 * 1000 * 1000;
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/validate', validateEmail);
+router.get('/getMemeberByGymId/:id', validateGymCrewOwner, getMemeberByGymId);
 // router.get('/send',sendEmail);
 // router.get('/', validateMember, getAll);
 router.get('/current', validateMember, getCurrent);
+router.get('/getById/:id', validateGymCrewOwner, getById);
 // router.get('/:id', validateMember, getById);
 router.put('/:id', validateMember, update);
 router.put('/delete/:id', validateMember, inactive);
 router.delete('/_delete/:id', validateMember, _delete);
+router.post('/forgotPassword', forgotPassword);
 router.post('/uploadProfile', validateMember, uploadProfile);
 // router.post('/uploadResume', validateMember, uploadResume)
 // router.get('/downloadResume/:id', validateMember, downloadResume)
 
 module.exports = router;
 
+function validateGymOwner(req, res, next) {
+    req.user.role === 'gymOwner' ? next() : next("Invalid Token")
+}
 
+function validateGymCrewOwner(req, res, next) {
+    if (req.user.role === 'gymOwner' || req.user.role === 'crew') next()
+    else next("Invalid Token")
+}
 
 function validateMember(req, res, next) {
-    console.log("123456");
     req.user.role === 'gymMemeber' ? next() : next("Invalid Token")
 }
 
@@ -45,6 +54,27 @@ function authenticate(req, res, next) {
         .catch(err => next(err));
 }
 
+
+function forgotPassword(req, res, next) {
+    GymMemberService.getByParam("email", req.body.email)
+        .then((owner) => {
+            return GymMemberService.sendResetEmail(owner[0], req.get('host'))
+        })
+        .then(email => {
+            if (email.accepted[0])
+                res.json({ "message": "Temporary password sent to your registered email", status: 1 })
+            else
+                res.json({ "error": "error in sending email", status: 0 })
+        })
+        .catch(err => next(err));
+}
+
+function getMemeberByGymId(req, res, next) {
+    console.log(req.params.id);
+    GymMemberService.getByGymId(req.params.id)
+        .then(gymMemebers => gymMemebers ? res.json({ gymMemebers, status: 1 }) : res.sendStatus(404))
+        .catch(err => next(err));
+}
 
 function register(req, res, next) {
     GymMemberService.create(req.body)

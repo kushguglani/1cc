@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const db = require('../../helpers/db');
 const GymList = db.GymList;
 const GymOwner = db.GymOwner;
+const GymCrew = db.GymCrew;
 
 module.exports = {
     authenticate,
@@ -12,7 +13,9 @@ module.exports = {
     create,
     update,
     delete: _delete,
-    inactive
+    inactive,
+    getByParam,
+    getGymIdFromCrew
 };
 
 async function authenticate({ userName, password }) {
@@ -27,8 +30,16 @@ async function authenticate({ userName, password }) {
     }
 }
 
+async function getByParam(param, value) {
+    return await GymList.findOne({ [param]: value });
+}
+
+async function getGymIdFromCrew(id) {
+    return await GymCrew.findById(id);
+}
+
 async function getAll() {
-    return await GymList.find({"active":1});
+    return await GymList.find({ "active": 1 });
 }
 
 async function getById(id) {
@@ -36,21 +47,24 @@ async function getById(id) {
 }
 
 async function create(gymListParams) {
+
+
+    const gymOwner = await GymOwner.findById(gymListParams.owner_id);
+    // validate
+    if (!gymOwner) throw 'Gym Owner not found';
+    if (gymOwner.owner_gym_id) throw 'Owner already have a gym'
+
     const gymData = new GymList(gymListParams);
     // save gymData
     return await gymData.save();
-    // await gymData.save((err,obj)=>{
-    //     if (err)
-    //     res.send(err);
-    //     return res.json({ message: 'User created!', data: obj });
-    // });
 }
 
 async function updateGymOwner(ownerId, gymId) {
     const gymOwner = await GymOwner.findById(ownerId);
     // validate
     if (!gymOwner) throw 'Gym Owner not found';
-    gymOwner.owner_gym_ids.push(gymId);
+    if (gymOwner.owner_gym_id) throw 'Owner already have a gym'
+    gymOwner.owner_gym_id = gymId;
     return await gymOwner.save();
 }
 
@@ -59,7 +73,7 @@ async function update(id, gymParam) {
 
     // validate
     if (!gym) throw 'GymList not found';
-  
+
 
     gymParam.updated = new Date();
     // copy employeeParam properties to employee

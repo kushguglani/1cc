@@ -15,9 +15,10 @@ const GymListSchema = mongoose.Schema({
     gymImages: { type: Array },
     weekdays: { type: Array },
     timing: { type: Array },
-    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true },
+    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
+    recent_gym_member: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Member'},
     created: { type: Date, default: Date.now },
-    updated: { type: Date }
+    updated: { type: Date, default: Date.now }
     // profilePic ->string
     //gymImages -string
     //weekday of gym -[]

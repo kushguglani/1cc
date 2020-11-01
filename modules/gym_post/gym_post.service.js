@@ -12,7 +12,9 @@ module.exports = {
     create,
     update,
     delete: _delete,
-    inactive
+    inactive,
+    getByParam,
+    getByDate
 };
 
 async function authenticate({ userName, password }) {
@@ -27,8 +29,20 @@ async function authenticate({ userName, password }) {
     }
 }
 
+async function getByDate() {
+    let todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    console.log(todayDate);
+    // var cutoff = new Date();
+    // cutoff.setDate(cutoff.getDay());
+    // console.log(cutoff);
+    return await GymPost.find({ created: { $gte: todayDate } });
+}
+
+async function getByParam(param, value) {
+    return await GymPost.find({ [param]: value });
+}
 async function getAll() {
-    return await GymPost.find({"active":1});
+    return await GymPost.find({ "active": 1 });
 }
 
 async function getById(id) {
@@ -45,7 +59,7 @@ async function updateGymOwner(ownerId, gymId) {
     const gymOwner = await GymOwner.findById(ownerId);
     // validate
     if (!gymOwner) throw 'Gym Owner not found';
-    gymOwner.owner_gym_ids.push(gymId);
+    gymOwner.gym_post_ids.push(gymId);
     return await gymOwner.save();
 }
 
@@ -54,10 +68,10 @@ async function update(id, gymParam) {
 
     // validate
     if (!gym) throw 'GymPost not found';
-  
+
 
     gymParam.updated = new Date();
-    console.log(gymParam  );
+    console.log(gymParam);
     // copy employeeParam properties to employee
     Object.assign(gym, gymParam);
 

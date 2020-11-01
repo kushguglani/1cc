@@ -12,6 +12,8 @@ function jwt() {
             // public routes that don't require authentication
             '/gym-owner/register',
             '/gym-owner/authenticate',
+            '/gym-owner/forgotPassword',
+            '/gym-member/forgotPassword',
             '/gym-crew/authenticate',
             '/gym-owner/validate',
             '/gym-member/register',

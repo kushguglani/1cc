@@ -11,7 +11,9 @@ const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', validateGymOwner, register);
-router.get('/', validateGymOwner, getAll);
+// router.get('/', validateGymOwner, getAll);
+router.get('/getByCrew', validateCrewOwner, getByCrew);
+router.get('/getByOwner', validateGymOwner, getByOwner);
 router.get('/current', validateCrewOwner, getCurrent);
 router.get('/:id', validateEmployee, getById);
 router.put('/:id', validateCrewOwner, update);
@@ -59,6 +61,21 @@ function register(req, res, next) {
 function getAll(req, res, next) {
     GymCrewService.getAll()
         .then(gyms => res.json(gyms))
+        .catch(err => next(err));
+}
+
+function getByCrew(req, res, next) {
+    GymCrewService.getById(req.user.id).then(crew=>{
+        GymCrewService.getByOwnerId(crew.owner_id)
+        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.sendStatus(404))
+        .catch(err => next(err));
+    })
+   
+}
+
+function getByOwner(req, res, next) {
+    GymCrewService.getByOwnerId(req.user.id)
+        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.sendStatus(404))
         .catch(err => next(err));
 }
 

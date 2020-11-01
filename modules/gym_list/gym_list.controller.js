@@ -12,13 +12,14 @@ const maxSize = 5 * 1000 * 1000;
 router.post('/authenticate', authenticate);
 router.post('/register', validateGymOwner, register);
 router.get('/', validateGymOwner, getAll);
-router.get('/current', validateEmployee, getCurrent);
+router.get('/ownerGym', validateGymOwner, ownerGym);
+router.get('/crewGym', validateCrewOwner, crewGym);
 router.get('/:id', validateEmployee, getById);
-router.put('/:id', validateGymOwner, update);
+router.put('/:id', validateGymCrewOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
-router.post('/uploadProfile', validateGymOwner, uploadProfile);
-router.post('/uploadGymImages', validateGymOwner, uploadGymImages);
+router.post('/uploadProfile', validateGymCrewOwner, uploadProfile);
+router.post('/uploadGymImages', validateGymCrewOwner, uploadGymImages);
 router.get('/downloadResume/:id', validateEmployee, downloadResume);
 
 module.exports = router;
@@ -28,6 +29,16 @@ function validateGymOwner(req, res, next) {
 }
 function validateEmployee(req, res, next) {
     req.user.role === 'employee' ? next() : next("Invalid Token")
+}
+
+function validateCrewOwner(req, res, next) {
+    console.log("----");
+    req.user.role === 'crew' ? next() : next("Invalid Token")
+}
+
+function validateGymCrewOwner(req, res, next) {
+    if (req.user.role === 'gymOwner' || req.user.role === 'crew') next()
+    else next("Invalid Token")
 }
 
 function authenticate(req, res, next) {
@@ -58,8 +69,18 @@ function getAll(req, res, next) {
         .catch(err => next(err));
 }
 
-function getCurrent(req, res, next) {
-    GymListService.getById(req.user.id)
+function ownerGym(req, res, next) {
+    GymListService.getByParam("owner_id", req.user.id)
+        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .catch(err => next(err));
+}
+
+function crewGym(req, res, next) {
+    GymListService.getGymIdFromCrew(req.user.id)
+        .then(res => {
+            console.log(res);
+            return GymListService.getById(res.owner_gym_id)
+        })
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
         .catch(err => next(err));
 }

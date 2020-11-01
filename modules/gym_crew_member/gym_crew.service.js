@@ -12,7 +12,8 @@ module.exports = {
     create,
     update,
     delete: _delete,
-    inactive
+    inactive,
+    getByOwnerId
 };
 
 async function authenticate({ userName, password }) {
@@ -35,10 +36,16 @@ async function getById(id) {
     return await GymCrew.findById(id);
 }
 
+async function getByOwnerId(id) {
+    return await GymCrew.find({ "owner_id": id });
+}
+
 async function create(GymCrewParams) {
     // const gymData = new GymCrew(GymCrewParams);
     // return await gymData.save();
-
+    // fetch gym id from owner
+    const gymOwner = await GymOwner.findById(GymCrewParams.owner_id);
+    GymCrewParams.owner_gym_id = gymOwner.owner_gym_id;
     // validate
     if (await GymCrew.findOne({ userName: GymCrewParams.userName })) {
         throw `Crew Member with userName:${GymCrewParams.userName} already exists`;
@@ -51,9 +58,6 @@ async function create(GymCrewParams) {
     }
     // save employee
     return await crew.save();
-
-
-
 }
 
 async function updateGymOwner(ownerId, gymId) {
@@ -69,7 +73,7 @@ async function update(id, crewParam) {
 
     // validate
     if (!crew) throw 'GymCrew not found';
-    
+
     if (crewParam.userName && crew.userName !== crewParam.userName && await GymOwner.findOne({ userName: crewParam.userName })) {
         throw 'Crew "' + crewParam.userName + '" is already taken';
     }

@@ -8,6 +8,8 @@ const fs = require('fs');
 // routes
 router.post('/authenticate', authenticate);
 router.get('/validate', validateEmail);
+router.post('/forgotPassword', forgotPassword);
+router.get('/validate', validateEmail);
 router.post('/register', register);
 // router.get('/', validateGymOwner, getAll);
 router.get('/current', validateGymOwner, getCurrent);
@@ -47,6 +49,20 @@ function register(req, res, next) {
         .then(email => {
             if (email.accepted[0])
                 res.json({ "message": "Gym owner Registered, please verify your registered email", status: 1 })
+            else
+                res.json({ "error": "error in sending email", status: 0 })
+        })
+        .catch(err => next(err));
+}
+
+function forgotPassword(req, res, next) {
+    GymOwnerService.getByParam("email", req.body.email)
+        .then((owner) => {
+            return GymOwnerService.sendResetEmail(owner[0], req.get('host'))
+        })
+        .then(email => {
+            if (email.accepted[0])
+                res.json({ "message": "Temporary password sent to your registered email", status: 1 })
             else
                 res.json({ "error": "error in sending email", status: 0 })
         })

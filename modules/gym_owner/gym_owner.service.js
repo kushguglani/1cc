@@ -13,7 +13,9 @@ module.exports = {
     delete: _delete,
     inactive,
     validateOwnerEmail,
-    sendEmail
+    sendEmail,
+    sendResetEmail,
+    getByParam
 };
 
 async function authenticate({ email, password }) {
@@ -39,7 +41,7 @@ async function validateOwnerEmail(jwtID) {
     if (owner) {
         owner.emailVerirfied = 1;
         await owner.save();
-        return { "message": "email verified successfully", status: 0 }
+        return { "message": "email verified successfully", status: 1 }
     }
 }
 
@@ -55,8 +57,33 @@ async function sendEmail(owner, host) {
     return await sendNodeEmail(mailOptions)
 }
 
+async function sendResetEmail(ownerParam, host) {
+
+    const owner = await GymOwner.findById(ownerParam.id);
+    let password = Array(10).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(function (x) { return x[Math.floor(Math.random() * x.length)] }).join('');
+    ownerParam.password = bcrypt.hashSync(password, 10);
+    console.log(owner);
+    ownerParam.reset = 1;
+    ownerParam.updated = new Date();
+    console.log(ownerParam);
+    // copy ownerParam properties to owner
+    Object.assign(owner, ownerParam);
+
+    await owner.save();
+    let mailOptions = {
+        to: owner.email,
+        subject: `1cc-worl Account Information - ${owner.email} `,
+        html: `Hello,<br> We have provided a temporary password i.e <strong>${password}. </strong>`
+    }
+    return await sendNodeEmail(mailOptions)
+}
+
 async function getAll() {
     return await GymOwner.find({ "active": 1 });
+}
+
+async function getByParam(param, value) {
+    return await GymOwner.find({ [param]: value });
 }
 
 async function getById(id) {
@@ -91,14 +118,24 @@ async function update(id, ownerParam) {
         throw 'Email can not be updated';
     }
     if (ownerParam.mobile && owner.mobile !== ownerParam.mobile && await GymOwner.findOne({ mobile: ownerParam.mobile })) {
-        throw 'GymOwnername "' + ownerParam.mobile + '" is already taken';
+        throw 'Owner mobile "' + ownerParam.mobile + '" is already in list';
     }
+    
+    // if (ownerParam.email && owner.email !== ownerParam.email && await GymOwner.findOne({ email: ownerParam.email })) {
+    //     throw 'Owner email "' + ownerParam.email + '" is already taken';
+    // }
 
     // hash password if it was entered
-    if (ownerParam.password) {
-        ownerParam.password = bcrypt.hashSync(ownerParam.password, 10);
+    if (ownerParam.oldPassword || ownerParam.password) {
+        if (bcrypt.compareSync(ownerParam.oldPassword, owner.password)) {
+            ownerParam.password = bcrypt.hashSync(ownerParam.password, 10);
+        }
+        else {
+            throw 'Current password is incorrect';
+        }
     }
     ownerParam.updated = new Date();
+    ownerParam.reset = 0;
     // copy ownerParam properties to owner
     Object.assign(owner, ownerParam);
 

@@ -5,14 +5,15 @@ const GymOwnerSchema = mongoose.Schema({
     mobile: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    owner_gym_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' }],
+    owner_gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner' },
     gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }],
     gym_post_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Posts' }],
     emailVerirfied: { type: Number, required: true, default:0 },
     active: { type: Number, required: true, default:1 },
+    reset: { type: Number, required: true, default:0 },
     created: { type: Date, default: Date.now },
     status: { type: Number, required: true, default:1 },
-    updated: { type: Date }
+    updated: { type: Date, default: Date.now }
     // password is missing
 });
 

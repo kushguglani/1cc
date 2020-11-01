@@ -10,9 +10,11 @@ const fs = require('fs');
 const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
-router.post('/register', validateGymOwner, register);
-router.get('/', validateGymOwner, getAll);
+router.post('/register', register);
+router.get('/', getAll);
 router.get('/current', validateEmployee, getCurrent);
+router.get('/getByUser', getByCurrent);
+router.get('/getByDate', getByDate);
 router.get('/:id', validateEmployee, getById);
 router.put('/:id', validateGymOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
@@ -37,15 +39,13 @@ function authenticate(req, res, next) {
 }
 
 function register(req, res, next) {
-    let gumPosts = {}
+    let gymPosts = {}
     req.body.owner_id = req.user.id;
     GymPostService.create(req.body)
         .then((gym) => {
-            gumPosts = gym;
-            return GymPostService.updateGymOwner(req.user.id, gym.id)
-        })
-        .then(response => {
-            return res.json(gumPosts);
+            gymPosts = gym;
+           
+            return res.json(gymPosts);
         })
         .catch(err => next(err));
     // .then(() => res.json({ "message": "Gym Registered successfully" }))
@@ -55,6 +55,18 @@ function register(req, res, next) {
 function getAll(req, res, next) {
     GymPostService.getAll()
         .then(gyms => res.json(gyms))
+        .catch(err => next(err));
+}
+
+function getByCurrent(req, res, next) {
+    GymPostService.getByParam("owner_id",req.user.id)
+        .then(gym => gym ? res.json(gym) : res.sendStatus(404))
+        .catch(err => next(err));
+}
+
+function getByDate(req, res, next) {
+    GymPostService.getByDate()
+        .then(gym => gym ? res.json(gym) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
