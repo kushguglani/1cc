@@ -11,7 +11,7 @@ const maxSize = 5 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', validateGymOwner, register);
-router.get('/', validateGymOwner, getAll);
+router.get('/', getAll);
 router.get('/ownerGym', validateGymOwner, ownerGym);
 router.get('/crewGym', validateCrewOwner, crewGym);
 router.get('/:id', validateEmployee, getById);

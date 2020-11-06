@@ -124,6 +124,9 @@ async function update(id, employeeParam) {
     if (employee.employeename !== employeeParam.employeename && await GymMember.findOne({ employeename: employeeParam.employeename })) {
         throw 'GymMembername "' + employeeParam.employeename + '" is already taken';
     }
+    if (employee.email && employee.email !== employee.email) {
+        throw 'Email can not be updated';
+    }
     if (employeeParam.connected_gym) {
         // add to gym list recent_gym_member 
         const gym = await GymList.findById(employeeParam.connected_gym);
@@ -132,12 +135,17 @@ async function update(id, employeeParam) {
         gym.recent_gym_member = id;
         await gym.save();
     }
-
-    // hash password if it was entered
-    if (employeeParam.password) {
-        employeeParam.hash = bcrypt.hashSync(employeeParam.password, 10);
+    if (employeeParam.oldPassword || employeeParam.password) {
+        if (bcrypt.compareSync(employeeParam.oldPassword, employee.password)) {
+            employeeParam.password = bcrypt.hashSync(employeeParam.password, 10);
+        }
+        else {
+            throw 'Current password is incorrect';
+        }
     }
+
     employeeParam.updated = new Date();
+    employeeParam.reset = 0;
     // copy employeeParam properties to employee
     Object.assign(employee, employeeParam);
 
