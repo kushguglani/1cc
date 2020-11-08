@@ -36,6 +36,8 @@ function validateEmail(req, res, next) {
 }
 
 function authenticate(req, res, next) {
+    console.log("authenticate--------------");
+    console.log(req.body);
     GymOwnerService.authenticate(req.body)
         .then(owner => owner ? res.json(owner) : res.status(401).json({ message: 'Email or password is incorrect', status: 0 }))
         .catch(err => next(err));
