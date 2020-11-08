@@ -26,7 +26,8 @@ router.get('/downloadResume/:id', validateEmployee, downloadResume);
 module.exports = router;
 
 function validateGymOwner(req, res, next) {
-    console.log(req);
+    console.log("req.user");
+    console.log(req.user);
     req.user.role === 'gymOwner' ? next() : next("Invalid Token")
 }
 
