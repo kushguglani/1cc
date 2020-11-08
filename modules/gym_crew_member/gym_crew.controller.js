@@ -53,6 +53,8 @@ function register(req, res, next) {
             return GymCrewService.updateGymOwner(req.user.id, crew.id)
         })
         .then(response => {
+            console.log(response);
+            console.log(crewDetails);
             return res.json(crewDetails);
         })
         .catch(err => next(err));

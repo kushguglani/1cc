@@ -45,6 +45,7 @@ async function create(GymCrewParams) {
     // return await gymData.save();
     // fetch gym id from owner
     const gymOwner = await GymOwner.findById(GymCrewParams.owner_id);
+    console.log(gymOwner);
     GymCrewParams.owner_gym_id = gymOwner.owner_gym_id;
     // validate
     if (await GymCrew.findOne({ userName: GymCrewParams.userName })) {
@@ -62,6 +63,7 @@ async function create(GymCrewParams) {
 
 async function updateGymOwner(ownerId, gymId) {
     const gymOwner = await GymOwner.findById(ownerId);
+    console.log(gymOwner);
     // validate
     if (!gymOwner) throw 'Gym Owner not found';
     gymOwner.gym_crew_member_ids.push(gymId);
