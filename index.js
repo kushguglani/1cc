@@ -20,8 +20,8 @@ setupExpess();
 function setupExpess() {
     const app = express();
     const server = http.createServer(app);
-
-    app.use(bodyParser.urlencoded({ extended: false }));
+    console.log("-------------------");
+    app.use(bodyParser.urlencoded({ extended: true }));
     // parses all bodies as a string
     app.use(bodyParser.json());
 
