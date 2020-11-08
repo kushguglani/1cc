@@ -41,6 +41,7 @@ function validateEmployee(req, res, next) {
 }
 
 function authenticate(req, res, next) {
+    console.log(req.body);
     GymCrewService.authenticate(req.body)
         .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect', status: 0 }))
         .catch(err => next(err));
