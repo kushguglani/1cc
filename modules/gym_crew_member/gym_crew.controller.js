@@ -45,7 +45,8 @@ function authenticate(req, res, next) {
 }
 
 function register(req, res, next) {
-    console.log(req.body);
+    console.log("req.body"); 
+    console.log(req.body); 
     let crewDetails = {}
     req.body.owner_id = req.user.id;
     GymCrewService.create(req.body)
