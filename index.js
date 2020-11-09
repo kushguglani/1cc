@@ -20,7 +20,6 @@ setupExpess();
 function setupExpess() {
     const app = express();
     const server = http.createServer(app);
-    console.log("-------------------");
     app.use(bodyParser.urlencoded({ extended: true }));
     // parses all bodies as a string
     app.use(bodyParser.json());
@@ -44,8 +43,13 @@ function setupExpess() {
     // project documentation in json
     app.get('/documentation', (req, res) => {
         // res.download('documentation/project-seeker.postman_collection.json', 'project-seeker.postman_collection.json');
-        res.send({code:"Kush is always khush"})
+        res.send({ code: "Kush is always khush" })
     })
+
+    app.get('/download', function (req, res) {
+        const file = req.query.path;
+        res.download(file); // Set disposition and send it.
+    });
 
     // global error handler
     app.use(errorHandler);

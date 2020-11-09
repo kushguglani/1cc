@@ -31,10 +31,8 @@ async function authenticate({ userName, password }) {
 
 async function getByDate() {
     let todayDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    console.log(todayDate);
     // var cutoff = new Date();
     // cutoff.setDate(cutoff.getDay());
-    // console.log(cutoff);
     return await GymPost.find({ created: { $gte: todayDate } });
 }
 
@@ -71,7 +69,6 @@ async function update(id, gymParam) {
 
 
     gymParam.updated = new Date();
-    console.log(gymParam);
     // copy employeeParam properties to employee
     Object.assign(gym, gymParam);
 

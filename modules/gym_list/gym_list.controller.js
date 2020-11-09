@@ -32,7 +32,6 @@ function validateEmployee(req, res, next) {
 }
 
 function validateCrewOwner(req, res, next) {
-    console.log("----");
     req.user.role === 'crew' ? next() : next("Invalid Token")
 }
 
@@ -78,7 +77,6 @@ function ownerGym(req, res, next) {
 function crewGym(req, res, next) {
     GymListService.getGymIdFromCrew(req.user.id)
         .then(res => {
-            console.log(res);
             return GymListService.getById(res.owner_gym_id)
         })
         .then(employee => employee ? res.json(employee) : res.sendStatus(404))
@@ -167,7 +165,6 @@ function uploadGymImages(req, res, next) {
     }
     GymListService.getById(gymId)
         .then(gym => {
-            console.log(gym);
             if (!gym) return res.send({ message: "gym id is not valid", status: 0 })
             let fileCount = 6
             if (gym.gymImages && gym.gymImages.length >= 6) {
@@ -176,7 +173,6 @@ function uploadGymImages(req, res, next) {
             else if (gym.gymImages)
                 fileCount = 6 - (gym.gymImages.length > 0 ? gym.gymImages.length : 0);
 
-            console.log(fileCount);
             const uploadMultipleFile = multer({
                 storage,
                 limits: { fileSize: maxSize },

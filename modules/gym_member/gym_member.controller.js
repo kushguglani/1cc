@@ -70,7 +70,6 @@ function forgotPassword(req, res, next) {
 }
 
 function getMemeberByGymId(req, res, next) {
-    console.log(req.params.id);
     GymMemberService.getByGymId(req.params.id)
         .then(gymMemebers => gymMemebers ? res.json({ gymMemebers, status: 1 }) : res.sendStatus(404))
         .catch(err => next(err));

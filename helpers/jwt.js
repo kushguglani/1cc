@@ -20,7 +20,8 @@ function jwt() {
             '/gym-member/send',
             '/gym-member/validate',
             '/gym-member/authenticate',
-            '/documentation'
+            '/documentation',
+            '/download'
         ]
     });
 }

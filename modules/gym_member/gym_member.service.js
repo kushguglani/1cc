@@ -73,10 +73,8 @@ async function sendResetEmail(ownerParam, host) {
     const owner = await GymMember.findById(ownerParam.id);
     let password = Array(10).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(function (x) { return x[Math.floor(Math.random() * x.length)] }).join('');
     ownerParam.password = bcrypt.hashSync(password, 10);
-    console.log(owner);
     ownerParam.reset = 1;
     ownerParam.updated = new Date();
-    console.log(ownerParam);
     // copy ownerParam properties to owner
     Object.assign(owner, ownerParam);
 
@@ -135,7 +133,7 @@ async function update(id, employeeParam) {
         gym.recent_gym_member = id;
         await gym.save();
     }
-    if (employeeParam.oldPassword || employeeParam.password) {
+    if (employeeParam.oldPassword && employeeParam.password) {
         if (bcrypt.compareSync(employeeParam.oldPassword, employee.password)) {
             employeeParam.password = bcrypt.hashSync(employeeParam.password, 10);
         }

@@ -26,13 +26,10 @@ router.get('/downloadResume/:id', validateEmployee, downloadResume);
 module.exports = router;
 
 function validateGymOwner(req, res, next) {
-    console.log("req.user");
-    console.log(req.user);
     req.user.role === 'gymOwner' ? next() : next("Invalid Token")
 }
 
 function validateCrewOwner(req, res, next) {
-    console.log("----");
     req.user.role === 'crew' ? next() : next("Invalid Token")
 }
 
@@ -41,16 +38,12 @@ function validateEmployee(req, res, next) {
 }
 
 function authenticate(req, res, next) {
-    console.log("authenticate--------------");
-    console.log(req.body);
     GymCrewService.authenticate(req.body)
         .then(employee => employee ? res.json(employee) : res.status(401).json({ message: 'User name or password is incorrect', status: 0 }))
         .catch(err => next(err));
 }
 
 function register(req, res, next) {
-    console.log("req.body"); 
-    console.log(req.body); 
     let crewDetails = {}
     req.body.owner_id = req.user.id;
     GymCrewService.create(req.body)
@@ -59,8 +52,6 @@ function register(req, res, next) {
             return GymCrewService.updateGymOwner(req.user.id, crew.id)
         })
         .then(response => {
-            console.log(response);
-            console.log(crewDetails);
             return res.json(crewDetails);
         })
         .catch(err => next(err));

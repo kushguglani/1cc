@@ -20,7 +20,6 @@ module.exports = {
 
 async function authenticate({ email, password }) {
     const owner = await GymOwner.findOne({ email });
-    console.log(owner);
     if (owner && bcrypt.compareSync(password, owner.password)) {
         if (owner.emailVerirfied === 0) return { message: "Email Verification Pending", status: 0 }
         else if (owner.active === 0) return { message: "Owner is inactive", status: 0 }
@@ -62,10 +61,8 @@ async function sendResetEmail(ownerParam, host) {
     const owner = await GymOwner.findById(ownerParam.id);
     let password = Array(10).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(function (x) { return x[Math.floor(Math.random() * x.length)] }).join('');
     ownerParam.password = bcrypt.hashSync(password, 10);
-    console.log(owner);
     ownerParam.reset = 1;
     ownerParam.updated = new Date();
-    console.log(ownerParam);
     // copy ownerParam properties to owner
     Object.assign(owner, ownerParam);
 
