@@ -60,25 +60,25 @@ function getAll(req, res, next) {
 
 function getByCurrent(req, res, next) {
     GymPostService.getByParam("owner_id",req.user.id)
-        .then(gym => gym ? res.json(gym) : res.sendStatus(404))
+        .then(gym => gym ? res.json(gym) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getByDate(req, res, next) {
     GymPostService.getByDate()
-        .then(gym => gym ? res.json(gym) : res.sendStatus(404))
+        .then(gym => gym ? res.json(gym) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getCurrent(req, res, next) {
     GymPostService.getById(req.user.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
     GymPostService.getById(req.params.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -127,7 +127,7 @@ function uploadVideo(req, res, next) {
         }
         GymPostService.getById(postId)
             .then(gym => {
-                if (!gym) res.sendStatus(404)
+                if (!gym) res.json({ message: "no details found", status: 0 })
                 // check if resume already uploaded
                 if (gym.postMediaName) {
                     //delete old file from server
@@ -156,7 +156,7 @@ function downloadResume(req, res, next) {
                 const filename = employee.resumeUploaded;
                 res.download(fileLocation + '/' + filename, filename)
             }
-            else res.sendStatus(404)
+            else res.json({ message: "no details found", status: 0 })
         })
         .catch(err => next(err));
 }

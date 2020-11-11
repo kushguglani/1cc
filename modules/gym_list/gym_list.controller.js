@@ -15,6 +15,7 @@ router.get('/', getAll);
 router.get('/ownerGym', validateGymOwner, ownerGym);
 router.get('/crewGym', validateCrewOwner, crewGym);
 router.get('/:id', validateEmployee, getById);
+router.get('/getByZipCode/:id', getByZipCode);
 router.put('/:id', validateGymCrewOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
@@ -70,7 +71,7 @@ function getAll(req, res, next) {
 
 function ownerGym(req, res, next) {
     GymListService.getByParam("owner_id", req.user.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -79,13 +80,22 @@ function crewGym(req, res, next) {
         .then(res => {
             return GymListService.getById(res.owner_gym_id)
         })
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
     GymListService.getById(req.params.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
+        .catch(err => next(err));
+}
+
+function getByZipCode(req, res, next) {
+    GymListService.getByParam("zip_code", req.params.id)
+        .then(employee => {
+            console.log(employee);
+            employee ? res.json(employee) : res.json({ message: "no gym found", status: 0 })
+        })
         .catch(err => next(err));
 }
 
@@ -208,7 +218,7 @@ function downloadResume(req, res, next) {
                 const filename = employee.resumeUploaded;
                 res.download(fileLocation + '/' + filename, filename)
             }
-            else res.sendStatus(404)
+            else res.json({ message: "no details found", status: 0 })
         })
         .catch(err => next(err));
 }

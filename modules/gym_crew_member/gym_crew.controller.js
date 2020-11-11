@@ -66,7 +66,7 @@ function getAll(req, res, next) {
 function getByCrew(req, res, next) {
     GymCrewService.getById(req.user.id).then(crew=>{
         GymCrewService.getByOwnerId(crew.owner_id)
-        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.sendStatus(404))
+        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
     })
    
@@ -74,19 +74,19 @@ function getByCrew(req, res, next) {
 
 function getByOwner(req, res, next) {
     GymCrewService.getByOwnerId(req.user.id)
-        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.sendStatus(404))
+        .then(crewMemebers => crewMemebers ? res.json({crewMemebers,status:1}) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getCurrent(req, res, next) {
     GymCrewService.getById(req.user.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
     GymCrewService.getById(req.params.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -210,7 +210,7 @@ function downloadResume(req, res, next) {
                 const filename = employee.resumeUploaded;
                 res.download(fileLocation + '/' + filename, filename)
             }
-            else res.sendStatus(404)
+            else res.json({ message: "no details found", status: 0 })
         })
         .catch(err => next(err));
 }

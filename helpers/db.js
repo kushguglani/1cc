@@ -13,6 +13,7 @@ module.exports = {
     GymList: require('../modules/gym_list/gym_list.model'),
     GymCrew: require('../modules/gym_crew_member/gym_crew_member.model'),
     GymPost: require('../modules/gym_post/gym_post.model'),
+    GymWorkout:require('../modules/gym_workout_data/workout.model')
     // Manager: require('../modules/manager/manager.model'),
     // Project: require('../modules/project/project.model'),
 };

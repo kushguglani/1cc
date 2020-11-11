@@ -71,7 +71,7 @@ function forgotPassword(req, res, next) {
 
 function getMemeberByGymId(req, res, next) {
     GymMemberService.getByGymId(req.params.id)
-        .then(gymMemebers => gymMemebers ? res.json({ gymMemebers, status: 1 }) : res.sendStatus(404))
+        .then(gymMemebers => gymMemebers ? res.json({ gymMemebers, status: 1 }) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -97,13 +97,13 @@ function getAll(req, res, next) {
 
 function getCurrent(req, res, next) {
     GymMemberService.getById(req.user.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
     GymMemberService.getById(req.params.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -153,7 +153,7 @@ function uploadProfile(req, res, next) {
         else {
             GymMemberService.getById(memeberID)
                 .then(gymCrew => {
-                    if (!gymCrew) res.sendStatus(404)
+                    if (!gymCrew) res.json({ message: "no details found", status: 0 })
                     // check if resume already uploaded
                     if (gymCrew.profilePic) {
                         //delete old file from server
@@ -181,7 +181,7 @@ function downloadResume(req, res, next) {
                 const filename = employee.resumeUploaded;
                 res.download(fileLocation + '/' + filename, filename)
             }
-            else res.sendStatus(404)
+            else res.json({ message: "no details found", status: 0 })
         })
         .catch(err => next(err));
 }

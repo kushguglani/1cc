@@ -77,13 +77,13 @@ function getAll(req, res, next) {
 
 function getCurrent(req, res, next) {
     GymOwnerService.getById(req.user.id)
-        .then(owner => owner ? res.json(owner) : res.sendStatus(404))
+        .then(owner => owner ? res.json(owner) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
 function getById(req, res, next) {
     GymOwnerService.getById(req.params.id)
-        .then(employee => employee ? res.json(employee) : res.sendStatus(404))
+        .then(employee => employee ? res.json(employee) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
 
@@ -119,7 +119,7 @@ function uploadResume(req, res, next) {
         }
         GymOwnerService.getById(req.user.id)
             .then(employee => {
-                if (!employee) res.sendStatus(404)
+                if (!employee) res.json({ message: "no details found", status: 0 })
                 // check if resume already uploaded
                 if (employee.resumeUploaded) {
                     //delete old file from server
@@ -147,7 +147,7 @@ function downloadResume(req, res, next) {
                 const filename = employee.resumeUploaded;
                 res.download(fileLocation + '/' + filename, filename)
             }
-            else res.sendStatus(404)
+            else res.json({ message: "no details found", status: 0 })
         })
         .catch(err => next(err));
 }
