@@ -42,6 +42,7 @@ function authenticate(req, res, next) {
 }
 
 function register(req, res, next) {
+    console.log(req.body);
     GymOwnerService.create(req.body)
         .then((owner) => {
             return GymOwnerService.sendEmail(owner, req.get('host'))

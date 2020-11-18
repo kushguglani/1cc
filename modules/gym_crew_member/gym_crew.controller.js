@@ -147,7 +147,7 @@ function uploadProfile(req, res, next) {
                         next(err);
                     }
                 }
-                gymCrew.profilePic = req.file.filename;
+                gymCrew.profilePic = fileUploadPath+"/"+req.file.filename;
                 return GymCrewService.update(crewID, gymCrew)
             })
             .then(() => res.json({ message: "Profile picture uploaded sucessfully!", status: 1}))
@@ -190,7 +190,7 @@ function uploadGymImages(req, res, next) {
                     else if (err instanceof multer.MulterError) {
                         return res.status(404).send(err);
                     }
-                    gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
+                    gym.gymImages = [...gym.gymImages, ...req.files.map(curr => fileUploadPath+"/"+curr.filename)];
                     GymCrewService.update(gymId, gym)
                         .then(() => {
                             res.json({ message: "Gym Images uploaded sucessfully!" , status: 1 })

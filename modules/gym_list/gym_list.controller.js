@@ -14,7 +14,7 @@ router.post('/register', validateGymOwner, register);
 router.get('/', getAll);
 router.get('/ownerGym', validateGymOwner, ownerGym);
 router.get('/crewGym', validateCrewOwner, crewGym);
-router.get('/:id', validateEmployee, getById);
+router.get('/:id', getById);
 router.get('/getByZipCode/:id', getByZipCode);
 router.put('/:id', validateGymCrewOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
@@ -156,7 +156,7 @@ function uploadProfile(req, res, next) {
                         next(err);
                     }
                 }
-                gym.profilePic = req.file.filename;
+                gym.profilePic = fileUploadPath+"/"+req.file.filename;
                 return GymListService.update(gymId, gym)
             })
             .then(() => res.json({ message: "Profile picture uploaded sucessfully!", status: 1 }))
@@ -198,7 +198,7 @@ function uploadGymImages(req, res, next) {
                 else if (err instanceof multer.MulterError) {
                     return res.status(404).send(err);
                 }
-                gym.gymImages = [...gym.gymImages, ...req.files.map(curr => curr.filename)];
+                gym.gymImages = [...gym.gymImages, ...req.files.map(curr => fileUploadPath+"/"+curr.filename)];
                 GymListService.update(gymId, gym)
                     .then(() => {
                         res.json({ message: "Gym Images uploaded sucessfully!", status: 1 })

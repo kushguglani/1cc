@@ -165,7 +165,7 @@ function uploadProfile(req, res, next) {
                             next(err);
                         }
                     }
-                    gymCrew.profilePic = req.file.filename;
+                    gymCrew.profilePic = fileUploadPath+"/"+req.file.filename;
                     return GymMemberService.update(memeberID, gymCrew)
                 })
                 .then(() => res.json({ message: "Profile picture uploaded sucessfully!", status: 1 }))

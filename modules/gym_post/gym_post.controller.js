@@ -139,7 +139,7 @@ function uploadVideo(req, res, next) {
                         next(err);
                     }
                 }
-                gym.postMediaName = req.file.filename;
+                gym.postMediaName = fileUploadPath+"/"+req.file.filename;
                 return GymPostService.update(postId, gym)
             })
             .then(() => res.json({ message: "Post video uploaded sucessfully!" , status: 1}))

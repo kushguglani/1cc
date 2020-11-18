@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const GymPostSchema = mongoose.Schema({
-    title: { type: String, required: true },
-    purpose: { type: String, required: true },
+    title: { type: String },
+    purpose: { type: String},
     description: { type: String, required: true },
     type: { type: String, required: true },
     postMediaName: { type: String },
@@ -10,6 +10,7 @@ const GymPostSchema = mongoose.Schema({
     views: { type: Number, default: 0 },
     videoPoints: { type: Number },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
+    gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' },
     created: { type: Date, default: Date.now },
     status: { type: Number, required: true, default:1 },
     active: { type: Number, required: true, default:1 },
