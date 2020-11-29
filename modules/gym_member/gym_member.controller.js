@@ -157,7 +157,7 @@ function uploadProfile(req, res, next) {
                     // check if resume already uploaded
                     if (gymCrew.profilePic) {
                         //delete old file from server
-                        const path = `${fileUploadPath}/${gymCrew.profilePic}`;
+                        const path = `${gymCrew.profilePic}`;
                         try {
                             fs.unlinkSync(path)
                             //file removed

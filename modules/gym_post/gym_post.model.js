@@ -8,6 +8,7 @@ const GymPostSchema = mongoose.Schema({
     postMediaName: { type: String },
     likes: { type: Number, default: 0 },
     views: { type: Number, default: 0 },
+    gymData: { type: Object },
     videoPoints: { type: Number },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
     gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' },

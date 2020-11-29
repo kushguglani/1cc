@@ -3,6 +3,7 @@ const router = express.Router();
 const GymPostService = require('./gym_post.service');
 const GymOwner = require('../gym_owner/gym_owner.service');
 const { storage, fileFilter } = require('../../helpers/fileUploadServer');
+var mongoose = require('mongoose');
 
 const multer = require('multer');
 const fs = require('fs');
@@ -20,7 +21,7 @@ router.put('/:id', validateGymOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
 // router.post('/uploadProfile', validateGymOwner, uploadProfile);
-router.post('/uploadVideo', validateGymOwner, uploadVideo);
+router.post('/uploadVideo', uploadVideo);
 router.get('/downloadResume/:id', validateEmployee, downloadResume);
 
 module.exports = router;
@@ -44,7 +45,7 @@ function register(req, res, next) {
     GymPostService.create(req.body)
         .then((gym) => {
             gymPosts = gym;
-           
+
             return res.json(gymPosts);
         })
         .catch(err => next(err));
@@ -54,12 +55,35 @@ function register(req, res, next) {
 
 function getAll(req, res, next) {
     GymPostService.getAll()
-        .then(gyms => res.json(gyms))
+        .then(posts => {
+            // res.json(posts);
+            const postData = [];
+            posts.forEach((curr, i) => {
+                if (curr.gym_id && mongoose.Types.ObjectId.isValid(curr.gym_id)) {
+                    console.log("------" + curr.gym_id);
+                    //fetch gym by id
+                     GymPostService.getGymById(curr.gym_id)
+                        .then(gym => {
+                            curr['gymData'] = gym[0];
+                            console.log("curr");
+                            console.log(curr);
+                            postData.push(curr)
+                            if (i === posts.length - 1) {
+                                return res.json(postData);
+                            }
+                        })
+                } else {
+                    postData.push(curr)
+                }
+
+            })
+            console.log("check");
+        })
         .catch(err => next(err));
 }
 
 function getByCurrent(req, res, next) {
-    GymPostService.getByParam("owner_id",req.user.id)
+    GymPostService.getByParam("owner_id", req.user.id)
         .then(gym => gym ? res.json(gym) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
 }
@@ -117,7 +141,7 @@ function uploadVideo(req, res, next) {
     }).single("file");
     UploadSingle(req, res, function (err) {
         if (err) {
-            return res.send({ message: err , status: 0});
+            return res.send({ message: err, status: 0 });
         }
         else if (!req.file) {
             return res.send({ message: 'Please select an file to upload', status: 0 });
@@ -131,7 +155,7 @@ function uploadVideo(req, res, next) {
                 // check if resume already uploaded
                 if (gym.postMediaName) {
                     //delete old file from server
-                    const path = `${fileUploadPath}/${gym.postMediaName}`;
+                    const path = `${gym.postMediaName}`;
                     try {
                         fs.unlinkSync(path)
                         //file removed
@@ -139,10 +163,10 @@ function uploadVideo(req, res, next) {
                         next(err);
                     }
                 }
-                gym.postMediaName = fileUploadPath+"/"+req.file.filename;
+                gym.postMediaName = fileUploadPath + "/" + req.file.filename;
                 return GymPostService.update(postId, gym)
             })
-            .then(() => res.json({ message: "Post video uploaded sucessfully!" , status: 1}))
+            .then(() => res.json({ message: "Post video uploaded sucessfully!", status: 1 }))
             .catch(err => next(err));
     });
 }

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../../helpers/db');
 const GymPost = db.GymPost;
+const GymList = db.GymList;
 const GymOwner = db.GymOwner;
 
 module.exports = {
@@ -14,7 +15,8 @@ module.exports = {
     delete: _delete,
     inactive,
     getByParam,
-    getByDate
+    getByDate,
+    getGymById
 };
 
 async function authenticate({ userName, password }) {
@@ -85,4 +87,9 @@ async function inactive(id) {
     if (!employee) throw 'GymPost not found';
     employee.active = 0;
     await employee.save();
+}
+
+async function getGymById(id) {
+    return  await GymList.find(id)
+    
 }

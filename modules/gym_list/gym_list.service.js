@@ -31,7 +31,7 @@ async function authenticate({ userName, password }) {
 }
 
 async function getByParam(param, value) {
-    return await GymList.findOne({ [param]: value });
+    return await GymList.find({ [param]: value });
 }
 
 async function getGymIdFromCrew(id) {
