@@ -13,7 +13,8 @@ module.exports = {
     update,
     delete: _delete,
     inactive,
-    getByOwnerId
+    getByOwnerId,
+    getByGymId
 };
 
 async function authenticate({ userName, password }) {
@@ -38,6 +39,10 @@ async function getById(id) {
 
 async function getByOwnerId(id) {
     return await GymCrew.find({ "owner_id": id });
+}
+
+async function getByGymId(id) {
+    return await GymCrew.find({ "owner_gym_id": id });
 }
 
 async function create(GymCrewParams) {

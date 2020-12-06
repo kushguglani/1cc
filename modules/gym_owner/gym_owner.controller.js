@@ -13,7 +13,7 @@ router.get('/validate', validateEmail);
 router.post('/register', register);
 // router.get('/', validateGymOwner, getAll);
 router.get('/current', validateGymOwner, getCurrent);
-// router.get('/:id', validateGymOwner, getById);
+router.get('/:id', getById);
 router.put('/:id', validateGymOwner, update);
 router.put('/delete/:id', validateGymOwner, inactive);
 router.delete('/_delete/:id', validateGymOwner, _delete);
