@@ -20,6 +20,8 @@ const GymCrewMemberSchema = mongoose.Schema({
     active: { type: Number, required: true, default:1 },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },    
     owner_gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
+    device_token: { type: String },
+    device_type: { type: String },
     created: { type: Date, default: Date.now },
     updated: { type: Date, default: Date.now }
     // gym_crew_member_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Crew_Member' }]

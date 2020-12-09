@@ -17,15 +17,15 @@ function createWorkout(req, res, next) {
 
 function getWorkout(eq, res, next) {
     WorkoutService.getWorkout()
-    .then(workout => {
-        console.log(workout);
-        return res.json(workout);
-    })
-    .catch(err => next(err));
+        .then(workout => {
+            console.log(workout);
+            return res.json(workout);
+        })
+        .catch(err => next(err));
 }
 function mockUserWorkOut(eq, res, next) {
-    let workData= {
-        "member_id":"123",
+    let workData = [{
+        "member_id": "123",
         "name": "workout_1",
         "days": [
             1,
@@ -104,7 +104,7 @@ function mockUserWorkOut(eq, res, next) {
         },
         "created": "",
         "updated": ""
-    }
+    }]
     return res.json(workData);
 }
 

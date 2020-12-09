@@ -18,6 +18,8 @@ const GymMemberSchema = mongoose.Schema({
     profilePic: { type: String },
     status: { type: Number, required: true, default:1 },
     reset: { type: Number, required: true, default:0 },
+    device_token: { type: String },
+    device_type: { type: String },
     updated: { type: Date, default: Date.now }
     // password is missing
 });

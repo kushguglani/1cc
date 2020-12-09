@@ -13,6 +13,8 @@ const GymOwnerSchema = mongoose.Schema({
     reset: { type: Number, required: true, default:0 },
     created: { type: Date, default: Date.now },
     status: { type: Number, required: true, default:1 },
+    device_token: { type: String },
+    device_type: { type: String },
     updated: { type: Date, default: Date.now }
     // password is missing
 });

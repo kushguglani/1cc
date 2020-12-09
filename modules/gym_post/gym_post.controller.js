@@ -144,7 +144,7 @@ function uploadVideo(req, res, next) {
             return res.send({ message: err, status: 0 });
         }
         else if (!req.file) {
-            return res.send({ message: 'Please select an file to upload', status: 0 });
+            return res.status(404).send({ message: 'Please select an file to upload',  status: 0});
         }
         else if (err instanceof multer.MulterError) {
             return res.send(err);

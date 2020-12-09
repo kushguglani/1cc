@@ -4,7 +4,7 @@ function errorHandler(err, req, res, next) {
     console.log(err);
     if (typeof (err) === 'string') {
         // custom application error
-        return res.status(400).json({ message: err, status:0 });
+        return res.status(404).json({ message: err, status:0 });
     }
 
     if (res.status === 404) {

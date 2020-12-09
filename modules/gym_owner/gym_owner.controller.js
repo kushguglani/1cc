@@ -113,7 +113,7 @@ function uploadResume(req, res, next) {
             return res.send({ message: err });
         }
         else if (!req.file) {
-            return res.send({ message: 'Please select an file to upload' });
+            return res.status(404).send({ message: 'Please select an file to upload',  status: 0});
         }
         else if (err instanceof multer.MulterError) {
             return res.send(err);
