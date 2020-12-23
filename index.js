@@ -36,10 +36,8 @@ function setupExpess() {
     app.use('/gym-member', require('./modules/gym_member/gym_member.controller'));
     app.use('/gym-crew', require('./modules/gym_crew_member/gym_crew.controller'));
     app.use('/gym-post', require('./modules/gym_post/gym_post.controller'));
-    app.use('/gym-workout', require('./modules/gym_workout_data/workout.controller'));
-    // app.use('/employee', require('./modules/employee/employee.controller'));
-    // app.use('/manager', require('./modules/manager/manager.controller'));
-    // app.use('/project', require('./modules/project/project.controller'));
+    app.use('/gym-exercise', require('./modules/gym_exercise/workout.controller'));
+    app.use('/gym-workout', require('./modules/gym_workout_service/workout_service.controller'));
 
     // project documentation in json
     app.get('/documentation', (req, res) => {

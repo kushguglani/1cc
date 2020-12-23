@@ -4,7 +4,7 @@ const router = express.Router();
 const WorkoutService = require('./workout.service')
 
 router.post('/create', createWorkout);
-router.get('/getWorkout', getWorkout);
+router.get('/getExercise', getExercise);
 router.get('/mockUserWorkOut', mockUserWorkOut);
 
 function createWorkout(req, res, next) {
@@ -15,10 +15,9 @@ function createWorkout(req, res, next) {
         .catch(err => next(err));
 }
 
-function getWorkout(eq, res, next) {
-    WorkoutService.getWorkout()
+function getExercise(eq, res, next) {
+    WorkoutService.getExercise()
         .then(workout => {
-            console.log(workout);
             return res.json(workout);
         })
         .catch(err => next(err));
