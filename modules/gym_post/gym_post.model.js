@@ -11,7 +11,7 @@ const GymPostSchema = mongoose.Schema({
     gymData: { type: Object },
     videoPoints: { type: Number },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_Owner', required: true },
-    gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List' },
+    gym_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Gym_List', required: true  },
     created: { type: Date, default: Date.now },
     status: { type: Number, required: true, default:1 },
     active: { type: Number, required: true, default:1 },
