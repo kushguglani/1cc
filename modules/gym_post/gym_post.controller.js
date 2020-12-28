@@ -16,7 +16,7 @@ router.get('/', getAll);
 router.get('/current', validateEmployee, getCurrent);
 router.get('/getByUser', getByCurrent);
 router.get('/getByDate', getByDate);
-router.get('/:id', validateEmployee, getById);
+router.get('/:id', getById);
 router.put('/:id', validateGymOwner, update);
 router.put('/delete/:id', validateEmployee, inactive);
 router.delete('/_delete/:id', validateEmployee, _delete);
@@ -62,7 +62,7 @@ function getAll(req, res, next) {
                 if (curr.gym_id && mongoose.Types.ObjectId.isValid(curr.gym_id)) {
                     console.log("------" + curr.gym_id);
                     //fetch gym by id
-                     GymPostService.getGymById(curr.gym_id)
+                    GymPostService.getGymById(curr.gym_id)
                         .then(gym => {
                             curr['gymData'] = gym[0];
                             console.log("curr");
@@ -144,7 +144,7 @@ function uploadVideo(req, res, next) {
             return res.send({ message: err, status: 0 });
         }
         else if (!req.file) {
-            return res.status(404).send({ message: 'Please select an file to upload',  status: 0});
+            return res.status(404).send({ message: 'Please select an file to upload', status: 0 });
         }
         else if (err instanceof multer.MulterError) {
             return res.send(err);
