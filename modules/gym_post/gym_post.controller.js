@@ -15,7 +15,7 @@ router.post('/register', register);
 router.get('/', getAll);
 router.get('/current', validateEmployee, getCurrent);
 router.get('/getByUser', getByCurrent);
-router.get('/getByGymId', getByGymId);
+router.get('/getByGymId/:id', getByGymId);
 router.get('/getByDate', getByDate);
 router.get('/:id', getById);
 router.put('/:id', validateGymOwner, update);
@@ -90,6 +90,7 @@ function getByCurrent(req, res, next) {
 }
 
 function getByGymId(req, res, next) {
+    console.log("k");
     GymPostService.getByParam("gym_id", req.params.id)
         .then(gym => gym ? res.json(gym) : res.json({ message: "no details found", status: 0 }))
         .catch(err => next(err));
