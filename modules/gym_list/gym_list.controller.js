@@ -94,7 +94,7 @@ function getByZipCode(req, res, next) {
     GymListService.getByParam("zip_code", req.params.id)
         .then(employee => {
             console.log(employee);
-            employee ? res.json(employee) : res.json({ message: "no gym found", status: 0 })
+            employee.length>0 ? res.json(employee) : res.status(401).json({ message: "no gym found", status: 0 })
         })
         .catch(err => next(err));
 }
