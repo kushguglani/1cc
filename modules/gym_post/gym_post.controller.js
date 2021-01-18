@@ -12,6 +12,7 @@ const maxSize = 50 * 1000 * 1000;
 // routes
 router.post('/authenticate', authenticate);
 router.post('/register', register);
+router.post('/likePost', likePost);
 router.get('/', getAll);
 router.get('/current', validateEmployee, getCurrent);
 router.get('/getByUser', getByCurrent);
@@ -47,6 +48,19 @@ function register(req, res, next) {
         .then((gym) => {
             gymPosts = gym;
 
+            return res.json(gymPosts);
+        })
+        .catch(err => next(err));
+    // .then(() => res.json({ "message": "Gym Registered successfully" }))
+    // .catch(err => next(err));
+}
+function likePost(req, res, next) {
+    const postId = req.query.id
+    let user = req.user.id;
+    console.log(postId);
+    GymPostService.likePost(postId, user)
+        .then((gym) => {
+            gymPosts = gym;
             return res.json(gymPosts);
         })
         .catch(err => next(err));
@@ -136,7 +150,7 @@ function inactive(req, res, next) {
 function uploadVideo(req, res, next) {
     const postId = req.query.id
     const fileUploadPath = `uploads/${req.user.id}/post`;
-    var filetypes = /mp4|mov|webm|mkv|gif|3gp/;
+    var filetypes = /mp4|mov|webm|mkv|gif|3gp|jpeg|jpg|png|gif|svg/;
     req.fileDetails = {
         type: "single",
         fileUploadPath,

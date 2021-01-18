@@ -16,7 +16,8 @@ module.exports = {
     inactive,
     getByParam,
     getByDate,
-    getGymById
+    getGymById,
+    likePost
 };
 
 async function authenticate({ userName, password }) {
@@ -77,6 +78,31 @@ async function update(id, gymParam) {
     return await gym.save();
 }
 
+async function likePost(id, user) {
+    console.log(id);
+    const gym = await GymPost.findById(id);
+
+    // validate
+    if (!gym) throw 'GymPost not found';
+    if (!gym.likedBy.includes(user)) {
+        gym.likedBy.push(user);
+        ++gym.likes;
+    } else {
+        const index = gym.likedBy.indexOf(user);
+        if (index > -1) {
+            gym.likedBy.splice(index, 1);
+        }
+        --gym.likes;
+    }
+    console.log(gym);
+    // return gym;
+    // gymParam.updated = new Date();
+    // copy employeeParam properties to employee
+    // Object.assign(gym, gymParam);
+
+    return await gym.save();
+}
+
 async function _delete(id) {
     await GymPost.findByIdAndRemove(id);
 }
@@ -90,6 +116,6 @@ async function inactive(id) {
 }
 
 async function getGymById(id) {
-    return  await GymList.find(id)
-    
+    return await GymList.find(id)
+
 }

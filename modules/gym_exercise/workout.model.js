@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const WorkoutSchema = mongoose.Schema({
     name: { type: String, required: true },
-    subCategory: { type: Array },
+    subCategories: { type: Array },
     data: { type: Array, required: true }
 })
 
